@@ -4,6 +4,7 @@
  * - /login [POST]
  * - /register [POST]
  * - /changePassword [POST]
+ * - /deleteUser [POST]
  */
 const AuthController = require('../controller').AuthController
 
@@ -14,7 +15,7 @@ module.exports = function (app) {
      *      email, password
      */
     app.post('/login', (req,res) => {
-        console.log('POST Request on /login')
+        console.log('POST request on /login')
         const email = req.body.email
         const password = req.body.password
 
@@ -37,7 +38,7 @@ module.exports = function (app) {
      *      email, username, password
      */
     app.post('/register', (req,res) => {
-        console.log('POST Request on /register')
+        console.log('POST request on /register')
         const email = req.body.email
         const username = req.body.username
         const password = req.body.password
@@ -62,7 +63,7 @@ module.exports = function (app) {
      * Essentially authenticates the user, then changes their password
      */
     app.post('/changePassword', (req,res) => {
-        console.log('POST Request on /changePassword')
+        console.log('POST request on /changePassword')
         const email = req.body.email
         const oldPass = req.body.password
         const newPass = req.body.newPass
@@ -79,6 +80,35 @@ module.exports = function (app) {
                     })
                 }
             }) 
+        }
+    })
+
+    /**
+     * An authentication-only command to remove a user from the collection.
+     * Can only be executed by a client with admin rights, or the owner of the account.
+     * Params:
+     *      email - The email of the user to delete
+     * Header:
+     *      x-access-token - The token acquired from authentication
+     */
+    app.post('/api/deleteUser', (req,res) => {
+        const email = req.body.email
+        console.log('Body Email ' + email)
+        
+        // If the email to delete is the email of the authenticated user,
+        // Or if the user authenticated is an admin, delete user
+        console.log(`Token: ${process.env.tokenEmail}, Admin: ${process.env.tokenIsAdmin}`)
+        if ((email == process.env.tokenEmail) ||
+            (process.env.tokenIsAdmin == true)) {
+                AuthController.deleteUser(email, (error, result) => {
+                    if (error) res.send(error)
+                    else res.send(result)
+                })
+        } else {
+            res.send({
+                success: false,
+                message: 'Error deleting user'
+            })
         }
     })
 

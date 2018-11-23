@@ -1,3 +1,6 @@
+/**
+ * Utility library that handles password hashing, and salt generation.
+ */
 const crypto = require('crypto');
 
 /**

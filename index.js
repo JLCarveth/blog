@@ -29,8 +29,11 @@ app.post('/', (req,res) => {
     console.log('POST Request on /')
 })
 
-app.post('/api/check', (req,res) => {
-    console.log('Hmmm..')
+/**
+ * All routes through /api/ require client authentication in the form of a JSON Web Token (JWT)
+ */
+app.post('/api/', (req,res) => {
+    res.send('Validated...')
 })
 
 app.listen(3000, () => {

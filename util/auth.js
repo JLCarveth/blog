@@ -4,9 +4,14 @@
 const jwt = require('jsonwebtoken')
 
 /**
- * 
+ * @callback requestCallback (error, data) as parameters
+ */
+
+/**
+ * Generates a token for an authenticated user.
  * @param {String} email - The email of the user being authenticated 
- * @param {Boolean} isAdmin - 
+ * @param {Boolean} isAdmin - whether to grant the user admin rights (true) or not
+ * @param {function} requestCallback - Handles the function response.
  */
 const generateToken = function (email, isAdmin, callback) {
     const issuedAt = new Date().getTime()
@@ -33,14 +38,13 @@ const generateToken = function (email, isAdmin, callback) {
 
 /**
  * Unpacks the provided JWT, or callbacks an error if it's not valid
- * @param {*} token 
- * @param {*} callback 
+ * @param {*} token - The token to be verified
+ * @param {*} callback - Handles the function response
  */
 const verifyJWT = function(token, callback) {
     return jwt.verify(token, process.env.secretKey, {}, (error, decoded) => {
         if (error) callback({error:"Error decoding JWT"})
         else {
-            console.log(`Decoded: ${decoded}`)
             callback(null, decoded)
         }
     })

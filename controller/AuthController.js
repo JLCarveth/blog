@@ -31,7 +31,7 @@ module.exports.authenticateUser = function (email, password, callback) {
                 if (error) callback(error)
                 else callback(null,token)
             })
-        } else callback({error: "Invalid username or password."})
+        } else callback({error: "Invalid email address or password."})
     })
 }
 
@@ -104,5 +104,15 @@ module.exports.verifyEmail = function (email, callback) {
         } else {
             callback(null, false)
         }
+    })
+}
+
+module.exports.deleteUser = function (email, callback) {
+    UserModel.deleteOne({email:email}, (error) => {
+        if (error) callback(error)
+        else callback(null, {
+            message: 'User deleted successfully.',
+            sucesss: true
+        })
     })
 }
