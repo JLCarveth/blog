@@ -38,6 +38,35 @@ const UserSchema = new Schema({
 })
 
 /**
+ * Blog Post Schema for Mongoose
+ */
+const BlogSchema = new Schema({
+    title: { type: String, required: true, unique: true },
+    subtitle: { type: String, required: false },
+    author: { 
+        type: String,
+        required:true, 
+        trim: true,
+        validate: [isEmail, 'Please provide a valid email address.']
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    comments: [{
+        author: { type: String, required: true },
+        date: { type: Date, default: Date.now },
+        content: { type: String, required: true }
+    }],
+    
+    tags: [{ type: String }]
+})
+
+/**
  * @callback requestCallback - for handling the function response
  */
 /**

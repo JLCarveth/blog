@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/AuthController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/AuthController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** 
+ * The AuthController handles the authentication logic
+ * Current URL Routes:
+ * - /login [POST]
+ * - /register [POST]
+ * - /changePassword [POST]
+ * - /api/deleteUser [POST]
+ */
+
+const crypto = require('../util').crypto
+const auth = require('../util').auth
+
+const mongoose = require('mongoose')
+const UserModel = require('../models').User
+
+/**
+ * @callback requestCallback (error, data) as parameters
+ */
+
+/**
+ * Authenticates credentials provided by a client against the MongoDB / Mongoose Collections
+ * If the user was authenticated successfully, a JWT is sent back as result in callback()
+ * @param {string} email - The email of the user trying to authenticate
+ * @param {sring} password - The password of the user trying to authenticate
+ * @param {function} requestCallback - Handles the response
+ */
+module.exports.authenticateUser = function (email, password, callback) {
+    UserModel.authenticate(email, password, (error, result) => {
+        if (error) { callback(error) }
+        else if (result == true) {
+            console.log('Result was true, were authenticated')
+            const token = auth.generateToken(email, false, (error, token) => {
+                if (error) callback(error)
+                else callback(null,token)
+            })
+        } else callback({error: "Invalid email address or password."})
+    })
+}
+
+/**
+ * Registers a User to the MongoDB / Mongoose Collection
+ * @param {string} email - the email of the user wishing to register
+ * @param {string} username - the chosen username of the user
+ * @param {string} password - the user's password
+ * @param {requestCallback} callback - the callback that handles the response
+ */
+module.exports.registerUser = function (email, username, password, callback) {
+    const hashObj = crypto.hashPassword(password)
+    const salt = hashObj.salt
+    UserModel.create({
+        email: email,
+        username: username,
+        password: hashObj.hash,
+        salt: salt
+    }, (error, user) => {
+        if (error) {
+            callback({error:'Error creating user.'})
+        }
+        else callback(null, user)
+    })
+}
+
+/**
+ * Changes the password of the given user, providing the current password is authenticated
+ * successfully.
+ * @param {string} email - the email of the user whose password will change
+ * @param {string} newPassword - the new password for user
+ * @param {requestCallback} callback - handles the response
+ */
+module.exports.changePassword = function (email, newPassword, callback) {
+    UserModel.findOne({email : email}, (error, user) => {
+        if (error) callback(error)
+        else {
+            const hashObj = crypto.hashPassword(newPassword)
+            if (hashObj.hash == user.password) {
+                UserModel.update({email:email}, {
+                    password:hashObj.hash,
+                    salt:hashObj.salt
+                }, (error, result) => {
+                    if (error) callback({error:'Error updating user entry.'})
+                    else callback({
+                        message: 'Password changed successfully.'
+                    })
+                })
+            }
+
+        }
+    })
+}
+
+/**
+ * Verifies that the email exists in the database (belongs to a user)
+ * @param {string} email - the email address to verify
+ * @param {requestCallback} callback - handles the function response, params error, boolean
+ */
+module.exports.verifyEmail = function (email, callback) {
+    if (!email) {
+        return callback({error: 'Email was not provided'})
+    }
+
+    UserModel.findOne({email:email}, (error, user) => {
+        if (error) return callback(error)
+        if (!email) return callback({
+            error: 'Email does not exist'
+        })
+        if (user.email == email) {
+            callback(null, true)
+        } else {
+            callback(null, false)
+        }
+    })
+}
+
+/**
+ * Removes the user with the given email address from the collection.
+ * @param {String} email - the email address of the user to delete
+ * @param {function} callback - handles the response of the function
+ */
+module.exports.deleteUser = function (email, callback) {
+    UserModel.deleteOne({email:email}, (error) => {
+        if (error) callback(error)
+        else callback(null, {
+            message: 'User deleted successfully.',
+            sucesss: true
+        })
+    })
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#authenticateUser">authenticateUser</a></li><li><a href="global.html#changePassword">changePassword</a></li><li><a href="global.html#crypto">crypto</a></li><li><a href="global.html#deleteUser">deleteUser</a></li><li><a href="global.html#generateKey">generateKey</a></li><li><a href="global.html#generateSalt">generateSalt</a></li><li><a href="global.html#generateToken">generateToken</a></li><li><a href="global.html#hashPassword">hashPassword</a></li><li><a href="global.html#hashPasswordWithSalt">hashPasswordWithSalt</a></li><li><a href="global.html#isEmail">isEmail</a></li><li><a href="global.html#jwt">jwt</a></li><li><a href="global.html#mongoose">mongoose</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#UserSchema">UserSchema</a></li><li><a href="global.html#validateInput">validateInput</a></li><li><a href="global.html#validateToken">validateToken</a></li><li><a href="global.html#verifyEmail">verifyEmail</a></li><li><a href="global.html#verifyJWT">verifyJWT</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Nov 23 2018 17:48:19 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
