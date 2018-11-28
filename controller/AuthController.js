@@ -1,4 +1,5 @@
 /**
+ * @file
  * This file handles all login behaviours such as:
  * - Authentication
  * - Registration
@@ -16,6 +17,7 @@ const UserModel = require('../models').User
  */
 
 /**
+ * @function
  * Authenticates credentials provided by a client against the MongoDB / Mongoose Collections
  * If the user was authenticated successfully, a JWT is sent back as result in callback()
  * @param {string} email - The email of the user trying to authenticate
@@ -36,6 +38,7 @@ module.exports.authenticateUser = function (email, password, callback) {
 }
 
 /**
+ * @function
  * Registeres a User to the MongoDB / Mongoose Collection
  * @param {string} email - the email of the user wishing to register
  * @param {string} username - the chosen username of the user
@@ -59,6 +62,8 @@ module.exports.registerUser = function (email, username, password, callback) {
 }
 
 /**
+ * @function
+ * Changes a registered user's password, if proper authentication is provided.
  * @param {string} email - the email of the user whose password will change
  * @param {string} newPassword - the new password for user
  * @param {requestCallback} callback - handles the response
@@ -85,6 +90,7 @@ module.exports.changePassword = function (email, newPassword, callback) {
 }
 
 /**
+ * @function
  * Verifies that the email exists in the database (belongs to a user)
  * @param {string} email - the email address to verify
  * @param {requestCallback} callback - handles the function response, params error, boolean
@@ -107,6 +113,12 @@ module.exports.verifyEmail = function (email, callback) {
     })
 }
 
+/**
+ * @function
+ * Removes a user from the MongoDB collection
+ * @param {String} email - the email of the user to remove
+ * @param {requestCallback} callback - handles function response.
+ */
 module.exports.deleteUser = function (email, callback) {
     UserModel.deleteOne({email:email}, (error) => {
         if (error) callback(error)
