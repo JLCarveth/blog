@@ -17,7 +17,7 @@ const BlogSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    // The content of the article, HTML format
+    // The content of the article, Markdown format
     content: {
         type: String,
         required: true
@@ -29,19 +29,20 @@ const BlogSchema = new Schema({
         content: { type: String, required: true }
     }],
     
-    // For article search / sort / categorization. The first tag is the post category.
+    // For article search / sort / categorization
     tags: [{ type: String }],
 
     // All posts by default, are unapproved, and must be verified manually to become retreivable.
     approved: { type: Boolean, default: false },
 
+    // The rating array tracks users' ratings of the given article.
     rating: [{
         // Voter is the registered user's MongoDB/Mongoose ObjectID
         voter: {
             type: Schema.Types.ObjectId,
             required: true
         },
-        // A true vote will *increase* the rating by one, a false vote will *decrease*.
+        // true/false   :   +/-
         vote: {
             type: Boolean,
             required: true

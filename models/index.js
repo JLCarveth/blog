@@ -18,5 +18,6 @@ const User = mongoose.model('users', UserSchema)
 const Blog = mongoose.model('blog', BlogSchema)
 // Export the models
 module.exports  = {
-    User
+    User,
+    Blog
 }
