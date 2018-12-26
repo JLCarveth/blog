@@ -1,9 +1,10 @@
 /**
  * @file
+ * @author John L. Carveth
  * This file handles all login behaviours such as:
  * - Authentication
  * - Registration
- * - Changing user details (such as password)
+ * - Changing user password
 */
 
 const crypto = require('../util').crypto
@@ -113,6 +114,23 @@ module.exports.verifyEmail = function (email, callback) {
     })
 }
 
+/**
+ * @function
+ * Gets the ObjectID associated with the given email address, if it exists within
+ * the collection.
+ * @param {string} email - The email address of the user
+ * @param {requestCallback} callback - Handles the function response. 
+ */
+module.exports.getAuthorID = function (email, callback) {
+    UserModel.findOne({email:email}, (error, result) => {
+        if (error) callback(error)
+        else {
+            const id = result._id
+            console.log("[getAuthorID] " + id)
+            callback(null, id)
+        }
+    })
+}
 /**
  * @function
  * Removes a user from the MongoDB collection
