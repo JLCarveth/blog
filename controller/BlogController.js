@@ -128,7 +128,6 @@ module.exports.getPost = function (postID, callback) {
     })
 }
 
-
 /**
  * Utility function for creating the tag array
  * @param {String} tagString - String of tags separated by commas
