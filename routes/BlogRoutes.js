@@ -79,4 +79,47 @@ module.exports = function (app) {
             else res.send({success:true, message:result})
         })
     })
+
+    /**
+     * GET request to /blog/
+     * Fetch the 5 most recent approved blog posts.
+     */
+    app.get('/blog/', (req,res) => {
+        BlogController.fetchRecent((error, result) => {
+            if (error) res.send({success: false, message: error
+            }) 
+            else {
+                res.send({success:true, message:result})
+            }
+        })
+    })
+
+    /**
+     * GET request to /blog/a/authorID
+     * Gets all of the blog posts authored by the given user.
+     */
+    app.get('/blog/a/:author', (req,res) => {
+        const authorID = req.params.author
+
+        if (!authorID) {
+            res.send({success: false, message: 'Author ID must be provided.'})
+        } else {
+            BlogController.getPostsByAuthor(author, (error, result) => {
+                if (error) res.send({success:true, message:result})
+            })
+        }
+    })
+
+    app.get('/blog/b/:id', (req,res) => {
+        const id = req.params.id
+
+        if (!id) {
+            res.send({success:false, message: 'Post ID must be provided.'})
+        } else {
+            BlogController.getPost(id, (error, result) => {
+                if (error) res.send({success:false, message:error})
+                else res.send({success:true, message:result})
+            })
+        }
+    })
 }
