@@ -11,6 +11,7 @@ config.js
 
 # VSCode LineCounter extension output folder
 out/
+.VSCode/
 
 # JSDoc outputs
 docs/
