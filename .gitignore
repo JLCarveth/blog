@@ -8,3 +8,9 @@ node_modules/
 
 # Secret Keys, Passwords, etc.
 config.js
+
+# VSCode LineCounter extension output folder
+out/
+
+# JSDoc outputs
+docs/

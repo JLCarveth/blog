@@ -25,10 +25,6 @@ app.use(bodyParser.urlencoded({
 // Initiate the routes that don't need auth
 const routes = require('./routes')(app)
 
-app.post('/', (req,res) => {
-    console.log('POST Request on /')
-})
-
 /**
  * All routes through /api/ require client authentication in the form of a JSON Web Token (JWT)
  */

@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const isEmail = require('../util/validate').isEmail
+const crypto = require('../util/crypto')
+
 /**
  * Defines how a user is stored in MongoDB/Mongoose
  */

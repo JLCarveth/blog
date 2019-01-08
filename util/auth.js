@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken')
 
 /**
  * Generates a token for an authenticated user.
- * @param {String} email - The email of the user being authenticated 
+ * @param {String} id - The ObjectID of the user being authenticated 
  * @param {Boolean} isAdmin - whether to grant the user admin rights (true) or not
  * @param {function} requestCallback - Handles the function response.
  */
