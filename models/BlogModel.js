@@ -1,4 +1,10 @@
+/**
+ * @const mongoose - handles the data storage
+ */
 const mongoose = require('mongoose')
+/**
+ * @const Schema - the Mongoose schema object
+ */
 const Schema = mongoose.Schema
 
 /**
