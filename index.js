@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 
 const config = require('./config')
 
-const tokenValidator = require('./util').validate.validateToken
+const tokenValidator = require('./middlewares').AuthWare
 
 // Apply the token validator middleware to all requests on '/api'
 app.use('/api/', tokenValidator)
