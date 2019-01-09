@@ -6,6 +6,9 @@
  * - Fetch a specific blog post
  */
 
+ /**
+  * @const BlogModel the mongoose.Model object
+  */
  const BlogModel = require('../models').Blog
 
 /**
@@ -139,6 +142,7 @@ module.exports.getPost = function (postID, callback) {
 
 /**
  * @function
+ * 
  * Utility function for creating the tag array
  * @param {String} tagString - String of tags separated by commas
  * @return an array of Strings

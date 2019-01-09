@@ -38,3 +38,11 @@ module.exports.validateToken = function (req,res,next) {
         })
     } 
 }
+
+/**
+ * Check the IP making the request isn't blacklisted.
+ */
+module.exports.checkIP = function (req,res,next) {
+    const ip = req.ip
+    
+}
