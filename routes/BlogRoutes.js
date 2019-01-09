@@ -9,7 +9,7 @@ const AuthController = require('../controller').AuthController
 module.exports = function (app) {
 
     /**
-     * POST request to /api/submitpost
+     * POST request to /api/post
      * Stores the submitted post in the collection. The post will need to be 
      * approved before becoming eligible to be sent to clients (ie, visible to users)
      * 
@@ -110,6 +110,11 @@ module.exports = function (app) {
         }
     })
 
+
+    /**
+     * GET request to /blog/b/:id
+     * Gets a specific blog post by its ID.
+     */
     app.get('/blog/b/:id', (req,res) => {
         const id = req.params.id
 

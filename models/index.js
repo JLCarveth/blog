@@ -4,20 +4,22 @@
  */
 
 const mongoose = require('mongoose')
-const crypto = require('../util').crypto
-const isEmail = require('../util').validate.isEmail
 
 /**
  * BlogSchema defines how a blog post is stored in MongoDB
  */
 const BlogSchema = require('./BlogModel')
 const UserSchema = require('./UserModel')
+const IPSchema = require('./IPModel')
 
 // Define the model in mongoose
 const User = mongoose.model('users', UserSchema)
 const Blog = mongoose.model('blog', BlogSchema)
+const IP = mongoose.model('ip', IPSchema)
+
 // Export the models
 module.exports  = {
     User,
-    Blog
+    Blog,
+    IP
 }

@@ -1,4 +1,10 @@
+/**
+ * @const mongoose - handles the data storage
+ */
 const mongoose = require('mongoose')
+/**
+ * @const Schema - the Mongoose schema object
+ */
 const Schema = mongoose.Schema
 
 /**
@@ -58,6 +64,22 @@ const BlogSchema = new Schema({
 
     // For statistical purposes
     views: { type: Number, default: 0 }
+})
+
+/**
+ * Method that attaches a comment to the blog post. This is a nonstatic method.
+ * @param {ObjectID} authorID - the ObjectID of the comment author
+ * @param {String} content - the content of the comment.
+ */
+BlogSchema.methods.createComment = function (authorID, content) {
+    this.comments.push({author: authorID, content: content})
+}
+
+/**
+ * Allows clients to get article snippets
+ */
+BlogSchema.virtual('snippet').get(() => {
+    return this.content.substring(0,250).concat('...')
 })
 
 // DECLARE STATICS HERE

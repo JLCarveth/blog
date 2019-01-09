@@ -6,6 +6,9 @@
  * - Fetch a specific blog post
  */
 
+ /**
+  * @const BlogModel the mongoose.Model object
+  */
  const BlogModel = require('../models').Blog
 
 /**
@@ -99,6 +102,11 @@ module.exports.updatePost = function (blog, callback) {
     })
 }
 
+/**
+ * @function
+ * Gets at most five of the most recent approved posts within the collection.
+ * @param {requestCallback} callback - handles the function response.
+ */
 module.exports.fetchRecent = function (callback) {
     BlogModel.find({approved:true}, (error, result) => {
         if (error) callback(error)
@@ -107,7 +115,10 @@ module.exports.fetchRecent = function (callback) {
 }
 
 /**
+ * @function
  * Get all blog posts made by a certain author.
+ * @param {ObjectID} authorID - The ID of the author
+ * @param {requestCallback} callback - handles the function response.
  */
 module.exports.getPostsByAuthor = function (authorID, callback) {
     BlogModel.find({author:authorID}, (error, result) => {
@@ -117,6 +128,7 @@ module.exports.getPostsByAuthor = function (authorID, callback) {
 }
 
 /**
+ * @function
  * Fetches a single blog post by ID from the collection.
  * @param {ObjectID} postID - the ObjectID of the post to get.
  * @param {requestCallback} callback - handles the function response.
@@ -129,6 +141,8 @@ module.exports.getPost = function (postID, callback) {
 }
 
 /**
+ * @function
+ * 
  * Utility function for creating the tag array
  * @param {String} tagString - String of tags separated by commas
  * @return an array of Strings
