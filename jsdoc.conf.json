@@ -4,10 +4,12 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "source": {
-        "include": ["./controller", "./routes", "./util", "./models"],
+        "include": ["./controller", "./routes", "./models",
+            "./middlewares"],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_",
-        "exclude": ["./node_modules"]
+        "exclude": [
+            "./node_modules"]
     },
     "plugins": [
         "plugins/markdown"

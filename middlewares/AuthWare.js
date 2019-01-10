@@ -1,9 +1,9 @@
+/** @module AuthWare - Express.js middleware to verify access tokens */
 /**
  * @const auth - the JWT utility wrapper
  */
 const auth = require('./auth')
 /**
- * @module AuthWare - Express.js middleware to verify access tokens
  * @function
  * @param {Object} req - the Express.js request object
  * @param {Object} res - the Express.js response object
@@ -23,7 +23,6 @@ module.exports.validateToken = function (req,res,next) {
                 // Register the token to the process environment
                 process.env.tokenEmail = decoded.email
                 process.env.tokenIsAdmin = decoded.admin
-                
                 next()
             }
         })

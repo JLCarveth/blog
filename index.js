@@ -1,8 +1,16 @@
+/**
+ * Dependencies
+ */
 const crypto = require('./util').crypto
 const express = require('express')
 const app = express();
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 
+/**
+ * Database connections and secret keys
+ * @private
+ */
 const config = require('./config')
 
 const tokenValidator = require('./middlewares').AuthWare

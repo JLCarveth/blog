@@ -16,7 +16,7 @@ const jwt = require('jsonwebtoken')
 const generateToken = function (email, isAdmin, callback) {
     const issuedAt = new Date().getTime()
     // Expiry is 24h from issuedAt
-    const expiry = new Date(issuedAt + 86400000).getTime()
+    const expiry = generateExpiry()
     const payload = {
         "email" : email,
         "exp": expiry,
@@ -30,11 +30,22 @@ const generateToken = function (email, isAdmin, callback) {
                 error:error,
                 message:"Error generating token"
             })
-        }else { 
+        } else { 
             callback(null, token)
         }
     })
 }
+
+/**
+ * @private
+ * @function generateExpiry
+ * Generates a Date object 1 hour from the current time.
+ * @return {Date} the expiry date
+ */
+const generateExpiry = function () {
+    const issuedAt = new Date().getTime()
+    return new Date(issuedAt + 360000).getTime()
+} 
 
 /**
  * Unpacks the provided JWT, or callbacks an error if it's not valid
@@ -52,5 +63,6 @@ const verifyJWT = function(token, callback) {
 
 module.exports = {
     generateToken,
-    verifyJWT
+    verifyJWT,
+    generateExpiry
 }

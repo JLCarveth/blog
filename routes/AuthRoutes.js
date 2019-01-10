@@ -1,4 +1,6 @@
 /** 
+ * @module routes/AuthRoutes
+ * @requires express
  * The AuthController handles the authentication logic
  * Current URL Routes:
  * - /login [POST]
@@ -20,12 +22,17 @@ module.exports = function (app) {
         const password = req.body.password
 
         if (!email || ! password) {
-            res.end('Email or Password not provided')
+            res.status(422).send('Email or Password not provided')
         } else {
             AuthController.authenticateUser(email, password, (error, result) => {
                 if (error) res.json(error)
                 else {
                     console.log(`Result: ${result}`)
+                    const expiry = new Date().getTime()
+                    res.cookie('token', result, {
+                        secure: true,
+                         httpOnly:true,
+                        expiry: new Date(expiry + 360000).getTime()})
                     res.json(result)
                 }
              })
