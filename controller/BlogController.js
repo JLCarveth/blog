@@ -1,19 +1,14 @@
 /**
- * @file This controller handles all blog posting / editing / retreival / search / etc...
- * 
- * TODO:
- * - Post a comment on a blog post.
- * - Fetch a specific blog post
+ * @module FileController
+ * This controller handles all blog posting / editing / retreival / search / etc...
+ * @author John L. Carveth <jlcarveth@gmail.com>
+ * @callback requestCallback (error, result) is used for all asynchronous calls.
  */
 
  /**
   * @const BlogModel the mongoose.Model object
   */
  const BlogModel = require('../models').Blog
-
-/**
- * @callback requestCallback (error, result) is used for all asynchronous calls.
- */
 
 /**
  * @function

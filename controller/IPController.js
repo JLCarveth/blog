@@ -1,8 +1,7 @@
 /**
- * @file
+ * @module IPController
  * The `IPController` handles the logic for IP addresses.
- * git.
- * 
+ * @author John l. Carveth
  * @callback requestCallback (error, result) is used for all asynchronous calls.
 */
 
@@ -60,7 +59,8 @@ module.exports.checkAddress = function (address, callback) {
 
 /**
  * @private
- * @function verifies the validity of an IP address.
+ * @function 
+ * Verifies the validity of an IP address.
  * @param {String} ip - the IP address to verify
  * @return true if the IP address is valid
  */

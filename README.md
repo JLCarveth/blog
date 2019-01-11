@@ -10,3 +10,4 @@ This blog system allows users to create accounts, change their passwords, and cr
 - Implement an IP blocking functionality, with routes to add/remove IPs.
 - Functions to remove accounts (for administrators).
 - Update auth middleware to check for cookies as well (for easy web browsing).
+- Fix account implementation to distinguish between admins, authors, and readers (end-users)
