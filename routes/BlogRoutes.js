@@ -1,8 +1,12 @@
 /**
- * @file Handles all of the routing for operations on blog post data
+ * @module routes/BlogRoutes
  * @author John L. Carveth
+ * @requires express
+ * Handles all of the routing for operations on blog post data
  */
-
+/**
+ * @private BlogController
+ */
 const BlogController = require('../controller').BlogController
 const AuthController = require('../controller').AuthController
 
@@ -28,7 +32,7 @@ module.exports = function (app) {
 
         // Check for any missing non-optional fields
         if (!title || !content) {
-            res.send({success:false, message: "Title/Author/Content missing from request"})
+            res.status(422).send({success:false, message: "Title/Author/Content missing from request"})
             return
         }
 

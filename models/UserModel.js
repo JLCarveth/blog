@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const isEmail = require('../util/validate').isEmail
 const crypto = require('../util/crypto')
 
 /**
@@ -58,6 +57,11 @@ UserSchema.statics.authenticate = function (email, password, callback) {
             }
         }
     })
+}
+
+const isEmail = function (email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
 }
 
 module.exports = UserSchema
