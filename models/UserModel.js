@@ -4,6 +4,15 @@ const Schema = mongoose.Schema
 const crypto = require('../util/crypto')
 
 /**
+ * @private
+ * @function isEmail
+ * @param {String} email - the email address to verify 
+ */
+const isEmail = function (email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+}
+/**
  * Defines how a user is stored in MongoDB/Mongoose
  */
 const UserSchema = new Schema({
@@ -57,11 +66,6 @@ UserSchema.statics.authenticate = function (email, password, callback) {
             }
         }
     })
-}
-
-const isEmail = function (email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
 }
 
 module.exports = UserSchema

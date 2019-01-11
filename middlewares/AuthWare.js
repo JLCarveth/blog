@@ -4,14 +4,14 @@
 /**
  * @const auth - the JWT utility wrapper
  */
-const auth = require('./auth')
+const auth = require('../util/auth')
 /**
  * @function validateToken
  * @param {Object} req - the Express.js request object
  * @param {Object} res - the Express.js response object
  * @param {Function} next - the Express.js next() function for middleware stack
  */
-module.exports.validateToken = function (req,res,next) {
+module.exports = function (req,res,next) {
     const token = req.headers['x-access-token'] || req.cookies.token
     console.log(`validateToken() - TOKEN: ${token}`)
     if (token) {
