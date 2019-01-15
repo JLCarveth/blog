@@ -9,8 +9,6 @@
 
 const crypto = require('../util').crypto
 const auth = require('../util').auth
-
-const mongoose = require('mongoose')
 const UserModel = require('../models').User
 
 /**
@@ -132,6 +130,7 @@ module.exports.getAuthorID = function (email, callback) {
         }
     })
 }
+
 /**
  * @function
  * Removes a user from the MongoDB collection
