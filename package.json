@@ -1,6 +1,6 @@
 {
   "name": "auth",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "An attempt to build an system that can authorize API requests.",
   "main": "index.js",
   "scripts": {

@@ -8,7 +8,7 @@
 /**
  * @const IPModel the mongoose.Model object
 */
-const IPModel = require('..models/').IPModel
+const IPModel = require('../models/').IPModel
 
 /**
  * @function

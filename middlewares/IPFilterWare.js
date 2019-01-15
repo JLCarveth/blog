@@ -10,7 +10,7 @@ const IPController = require('../controller').IPController
  * @param {Object} res - the Express.js response object
  * @param {Function} next - the Express.js middleware-chaining function
  */
-module.exports.filterIP = function (req,res,next) {
+module.exports = function (req,res,next) {
     const ip = req.ip
 
     // Ensure to trim any 

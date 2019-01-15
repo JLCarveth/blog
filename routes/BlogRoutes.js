@@ -4,9 +4,7 @@
  * @requires express
  * Handles all of the routing for operations on blog post data
  */
-/**
- * @private BlogController
- */
+
 const BlogController = require('../controller').BlogController
 const AuthController = require('../controller').AuthController
 

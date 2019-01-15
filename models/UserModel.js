@@ -4,6 +4,15 @@ const Schema = mongoose.Schema
 const crypto = require('../util/crypto')
 
 /**
+ * @private
+ * @function isEmail
+ * @param {String} email - the email address to verify 
+ */
+const isEmail = function (email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+}
+/**
  * Defines how a user is stored in MongoDB/Mongoose
  */
 const UserSchema = new Schema({
@@ -26,9 +35,9 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    admin: {
-        type: Boolean,
-        default: false
+    role: {
+        type: String,
+        default: 'user'
     }
 })
 
@@ -36,6 +45,8 @@ const UserSchema = new Schema({
  * @callback requestCallback - for handling the function response
  */
 /**
+ * @function authenticate
+ * Authenticates a login attempt. Now returns the users role if successful.
  * @param {string} email - the email address of the user trying to authenticate
  * @param {string} password - the password attempt
  * @param {requestCallback} callback - handles the response
@@ -49,19 +60,19 @@ UserSchema.statics.authenticate = function (email, password, callback) {
         })} else {
             if (user) {
                 const result = crypto.validateInput(password, user.password, user.salt)
-                callback(null, result)
+                if (result) {
+                    callback(null, {
+                        role: user.role
+                    })
+                } else callback({success:false, message:"Authentication Failed."})
             } else {
                 callback({
-                    error: "No such user was found."
+                    success: false,
+                    message: 'No such user was found.'
                 })
             }
         }
     })
-}
-
-const isEmail = function (email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
 }
 
 module.exports = UserSchema

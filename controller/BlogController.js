@@ -1,5 +1,5 @@
 /**
- * @module FileController
+ * @module BlogController
  * This controller handles all blog posting / editing / retreival / search / etc...
  * @author John L. Carveth <jlcarveth@gmail.com>
  * @callback requestCallback (error, result) is used for all asynchronous calls.
