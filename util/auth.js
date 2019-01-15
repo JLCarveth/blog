@@ -11,17 +11,17 @@ const jwt = require('jsonwebtoken')
  * @function generateToken
  * Generates a token for an authenticated user.
  * @param {String} id - The ObjectID of the user being authenticated 
- * @param {Boolean} isAdmin - whether to grant the user admin rights (true) or not
+ * @param {String} role - the users role
  * @param {function} requestCallback - Handles the function response.
  */
-const generateToken = function (email, isAdmin, callback) {
+const generateToken = function (email, role, callback) {
     const issuedAt = new Date().getTime()
     // Expiry is 24h from issuedAt
     const expiry = generateExpiry()
     const payload = {
         "email" : email,
         "exp": expiry,
-        "admin": isAdmin
+        "role": role
     }
     jwt.sign(payload, process.env.secretKey, {
         algorithm : "HS512"

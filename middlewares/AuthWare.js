@@ -25,7 +25,7 @@ module.exports = function (req,res,next) {
             } else {
                 // Register the token to the process environment
                 process.env.tokenEmail = decoded.email
-                process.env.tokenIsAdmin = decoded.admin
+                process.env.tokenRole = decoded.role
                 next()
             }
         })

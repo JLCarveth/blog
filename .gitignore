@@ -16,3 +16,6 @@ out/
 # JSDoc outputs
 docs/
 jsdoc.conf.json
+
+# Permission document file
+perms.txt

@@ -13,6 +13,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 /**
+ * RoleSchema Schema
  * @class RoleSchema
  * The RoleSchema which defines how the data is structured.
  * Each role has a role name, and a list of permissions.
@@ -29,18 +30,28 @@ const RoleSchema = new Schema({
 })
 
 const RoleModel = mongoose.model('roles',RoleSchema)
+
+// The User role
 RoleModel.create({
     role: 'user',
     permissions: ['readPost', 'commentPost', 'votePost']
 }, (error, result) => {})
 
+// The author role
 RoleModel.create({
     role: 'author',
     permissions: ['readPost', 'createPost', 'editPostSelf', 'commentPost',
 'votePost']
 }, (error, result) => {
     if (error) console.log(`Error: ${error}`)
-    else console.log('Result')
+    else console.log(`Result: ${result}`)
 })
+
+// The admin role
+RoleModel.create({
+    role: 'admin',
+    permissions: ['readPost', 'createPost', 'editPost', 'commentPost',
+    'votePost', 'approvePost', 'approveAccount']
+}, (error, result) => {})
 
 module.exports = RoleSchema

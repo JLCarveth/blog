@@ -1,5 +1,5 @@
 /**
- * @file
+ * @module AuthController
  * @author John L. Carveth
  * This file handles all login behaviours such as:
  * - Authentication
@@ -28,9 +28,10 @@ const UserModel = require('../models').User
 module.exports.authenticateUser = function (email, password, callback) {
     UserModel.authenticate(email, password, (error, result) => {
         if (error) { callback(error) }
-        else if (result == true) {
+        else if (result) {
             console.log('Result was true, were authenticated')
-            const token = auth.generateToken(email, false, (error, token) => {
+            // Store the returned role in the token
+            const token = auth.generateToken(email, result.role, (error, token) => {
                 if (error) callback(error)
                 else callback(null,token)
             })

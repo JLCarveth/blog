@@ -11,15 +11,18 @@ const mongoose = require('mongoose')
 const BlogSchema = require('./BlogModel')
 const UserSchema = require('./UserModel')
 const IPSchema = require('./IPModel')
+const RoleSchema = require('./RoleModel')
 
 // Define the model in mongoose
 const User = mongoose.model('users', UserSchema)
 const Blog = mongoose.model('blog', BlogSchema)
-const IP = mongoose.model('ip', IPSchema)
+const IP = mongoose.model('ips', IPSchema)
+const Role = mongoose.model('roles', RoleSchema)
 
 // Export the models
 module.exports  = {
     User,
     Blog,
-    IP
+    IP,
+    Role
 }
