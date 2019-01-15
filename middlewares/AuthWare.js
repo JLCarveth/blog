@@ -1,6 +1,7 @@
-/** @module AuthWare - Express.js middleware to verify access tokens 
+/** 
+ * @module AuthWare - Express.js middleware to verify access tokens 
  * @author John L. Carveth <jlcarveth@gmail.com>
-*/
+ */
 /**
  * @const auth - the JWT utility wrapper
  */
