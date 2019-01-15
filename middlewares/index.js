@@ -1,5 +1,9 @@
 const AuthWare = require('./AuthWare')
 const IPFilterWare = require('./IPFilterWare')
+const RoleWare = require('./RoleWare')
 
-module.exports.AuthWare = AuthWare
-module.exports.IPFilterWare = IPFilterWare
+module.exports = {
+    AuthWare,
+    IPFilterWare,
+    RoleWare
+}

@@ -8,7 +8,10 @@
  * @const IPController - handles the business logic for IP addresses
  */
 const IPController = require('../controller').IPController
-
+/**
+ * Handles RBAC
+ */
+const RoleWare = require('../middlewares').RoleWare
 
 module.exports = function (app) {
     /**
@@ -16,7 +19,7 @@ module.exports = function (app) {
      * Params:
      *      address, [reason]
      */
-    app.post('/api/banip', (req,res) => {
+    app.post('/api/banip', RoleWare('banip'), (req,res) => {
         console.log('POST request on /api/banip')
         const address = req.body.address
         const reason = req.body.reason
