@@ -31,27 +31,42 @@ const RoleSchema = new Schema({
 
 const RoleModel = mongoose.model('roles',RoleSchema)
 
+const createRole = async ({role, permissions}) => {
+    const matches = await RoleModel.find({role}).exec();
+
+    if (matches.length === 0) {
+        return RoleModel.create({role, permissions});
+    }
+};
 // The User role
-RoleModel.create({
+const userRole = {
     role: 'user',
     permissions: ['readPost', 'commentPost', 'votePost']
-}, (error, result) => {})
+}
 
 // The author role
-RoleModel.create({
+const authorRole = {
     role: 'author',
     permissions: ['readPost', 'createPost', 'editPostSelf', 'commentPost',
 'votePost']
-}, (error, result) => {
-    if (error) console.log(`Error: ${error}`)
-    else console.log(`Result: ${result}`)
-})
+}
 
 // The admin role
-RoleModel.create({
+const adminRole = {
     role: 'admin',
     permissions: ['readPost', 'createPost', 'editPost', 'commentPost',
     'votePost', 'approvePost', 'approveAccount']
-}, (error, result) => {})
+}
+
+(async () => {
+    await createRole(userRole)
+    console.log('User role has been seeded.')
+
+    await createRole(authorRole)
+    console.log('Author role has been seeded.')
+
+    await createRole(adminRole)
+    console.log('Admin role has been created.')
+})
 
 module.exports = RoleSchema
