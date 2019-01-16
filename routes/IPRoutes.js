@@ -8,15 +8,20 @@
  * @const IPController - handles the business logic for IP addresses
  */
 const IPController = require('../controller').IPController
-
+/**
+ * Handles RBAC
+ */
+const RoleWare = require('../middlewares').RoleWare
 
 module.exports = function (app) {
     /**
      * POST request on /api/banip
+     * Calls the RoleWare middleware before executing the rest of the logic.
+     * Users making this request must have the 'banip' permission.
      * Params:
      *      address, [reason]
      */
-    app.post('/api/banip', (req,res) => {
+    app.post('/api/banip', RoleWare('banIP'), (req,res) => {
         console.log('POST request on /api/banip')
         const address = req.body.address
         const reason = req.body.reason
@@ -36,7 +41,7 @@ module.exports = function (app) {
      * Params:
      *      address
      */
-    app.post('/api/unbanip', (req,res) => {
+    app.post('/api/unbanip', RoleWare('unbanIP'), (req,res) => {
         console.log('POST request on /api/unbanip')
 
         const address = req.body.address
