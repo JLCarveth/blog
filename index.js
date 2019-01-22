@@ -26,6 +26,7 @@ app.use(bodyParser.json())
 // To read body params
 app.use(bodyParser.urlencoded({extended:true}))
 
+// To avoid the 'deprecated url parser' warning...
 mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
     if (error) {
         throw error
