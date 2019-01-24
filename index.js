@@ -8,6 +8,9 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 
+const Seeder = require('./util').seed
+const seedData = require('./data.js')
+
 /**
  * Database connections and secret keys
  * @private
@@ -26,6 +29,7 @@ app.use(bodyParser.json())
 // To read body params
 app.use(bodyParser.urlencoded({extended:true}))
 
+// To avoid the 'deprecated url parser' warning...
 mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
     if (error) {
         throw error
@@ -34,6 +38,12 @@ mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
 
 // Initiate the other routes
 const routes = require('./routes')(app)
+
+// Seed all initial data for the system
+Seeder.connect(process.env.mongodbURI, () => {
+    // Seed the roles then sever the connection
+    Seeder.seedData(seedData.roleData, Seeder.disconnect)
+})
 
 app.listen(3000, () => {
     console.log('Listening...')

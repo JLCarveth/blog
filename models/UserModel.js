@@ -1,6 +1,12 @@
+/**
+ * @module models/UserModel
+ * @author John L. Carveth
+ * A mongoose model for defining how user data is stored/
+ */
+
+ // Dependencies
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
 const crypto = require('../util/crypto')
 
 /**
