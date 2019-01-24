@@ -2,6 +2,7 @@
  * @module seed
  * @author John L. Carveth
  * A module that can persist data to the MongoDB server once, 'seeding' the data.
+ * TODO: Enable optional logging, for debugging
  */
 
 /**
@@ -76,7 +77,8 @@ Seeder.prototype.seedData = function (data, callback) {
         promises.push(promiseIntertion(Model, item))
     })
 
-    Promise.all(promises)
+    Promise.all(promises).catch(()=>{})
+    callback();
 }
 
 /**
