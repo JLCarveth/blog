@@ -2,6 +2,7 @@
  * @module RoleWare - Express.js middleware to check a users role against the 
  * action they wish to complete.
  * @author John L. Carveth <jlcarveth@gmail.com>
+ * @version 0.1.0
  * 
  * TODO:
  *  - Handle both single permissions as well as permission arrays

@@ -18,7 +18,7 @@ module.exports = function (req,res,next) {
         ip = ip.substr(7)
     }
 
-    IPController.checkAddress(address, (error, result) => {
+    IPController.checkAddress(ip, (error, result) => {
         if (error || result == false) next()
         else {
             // The IP was found on the blacklist...

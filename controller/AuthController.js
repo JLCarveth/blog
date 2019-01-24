@@ -16,7 +16,7 @@ const UserModel = require('../models').User
  */
 
 /**
- * @function
+ * @function authenticateUser
  * Authenticates credentials provided by a client against the MongoDB / Mongoose Collections
  * If the user was authenticated successfully, a JWT is sent back as result in callback()
  * @param {string} email - The email of the user trying to authenticate
@@ -95,7 +95,7 @@ module.exports.changePassword = function (email, newPassword, callback) {
  * @param {string} email - the email address to verify
  * @param {requestCallback} callback - handles the function response, params error, boolean
  */
-module.exports.verifyEmail = function (email, callback) {
+module.exports.checkEmail = function (email, callback) {
     if (!email) {
         return callback({error: 'Email was not provided'})
     }
@@ -114,25 +114,25 @@ module.exports.verifyEmail = function (email, callback) {
 }
 
 /**
- * @function
+ * @function getUserEmail
  * Gets the ObjectID associated with the given email address, if it exists within
  * the collection.
  * @param {string} email - The email address of the user
  * @param {requestCallback} callback - Handles the function response. 
  */
-module.exports.getAuthorID = function (email, callback) {
+module.exports.getUserEmail = function (email, callback) {
     UserModel.findOne({email:email}, (error, result) => {
         if (error) callback(error)
         else {
             const id = result._id
-            console.log("[getAuthorID] " + id)
+            console.log("[getUserEmail] " + id)
             callback(null, id)
         }
     })
 }
 
 /**
- * @function
+ * @function deleteUser
  * Removes a user from the MongoDB collection
  * @param {String} email - the email of the user to remove
  * @param {requestCallback} callback - handles function response.

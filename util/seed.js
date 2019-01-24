@@ -74,7 +74,7 @@ Seeder.prototype.seedData = function (data, callback) {
     // For each object in the 'documents' field of the main object
     data.documents.forEach((item) => {
         promises.push(promiseDeletion(Model, item))
-        promises.push(promiseIntertion(Model, item))
+        promises.push(promiseInsertion(Model, item))
     })
 
     Promise.all(promises).catch(()=>{})
@@ -107,7 +107,7 @@ const promiseDeletion = function (model, item) {
 }
 
 /**
- * Creates a promise to insert the given data to the given mongoose.Model 
+ * Creates a promise to insert the given item into model
  * @param {mongoose.Model} model 
  * @param {Object} item 
  */

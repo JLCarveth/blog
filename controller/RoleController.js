@@ -25,6 +25,7 @@ module.exports.getPermissions = function (roleName, callback) {
 
 /**
  * @function checkPermission
+ * Checks if the provided role has been given the provided permission
  * @param {String} permission - the permission required by role
  * @param {String} role - the role which should contain permission
  * @param {requestCallback} callback - handles the function response
@@ -34,7 +35,7 @@ module.exports.checkPermission = function (permission, role, callback) {
     else {
         RoleModel.findOne({role:role}, (error,result) => {
             if (error) callback(error)
-            else callback(result.permissions.includes(permission))
+            else callback(null, result.permissions.includes(permission))
         })
     }
 }
