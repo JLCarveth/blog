@@ -111,7 +111,7 @@ const promiseDeletion = function (model, item) {
  * @param {mongoose.Model} model 
  * @param {Object} item 
  */
-const promiseIntertion = function (model, item) {
+const promiseInsertion = function (model, item) {
     return new Promise((resolve, reject) => {
         model.create(item, (error) => {
             if (error) reject()
