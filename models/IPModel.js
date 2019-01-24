@@ -1,11 +1,10 @@
 /**
- * @const mongoose - handles the data storage
+ * @module models/IPModel
+ * @author John L. Carveth
+ * Defines how IP addresses are stored.
  */
+// Dependencies
 const mongoose = require('mongoose')
-
-/**
- * @const Schema - the Schema object to be extended
- */
 const Schema = mongoose.Schema
 
 /**
