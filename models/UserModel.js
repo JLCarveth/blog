@@ -59,7 +59,7 @@ const UserSchema = new Schema({
  * 
  */
 UserSchema.statics.authenticate = function (email, password, callback) {
-    this.findOne({email:email}, function (error, user) {
+    this.findOne({'email':email}, function (error, user) {
         if (error) { callback({
             error: error,
             message: "User with that email address could not be found."

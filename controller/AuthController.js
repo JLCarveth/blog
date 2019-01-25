@@ -29,7 +29,7 @@ module.exports.authenticateUser = function (email, password, callback) {
         else if (result) {
             console.log('Result was true, were authenticated')
             // Store the returned role in the token
-            const token = auth.generateToken(email, result.role, (error, token) => {
+            auth.generateToken(email, result.role, (error, token) => {
                 if (error) callback(error)
                 else callback(null,token)
             })

@@ -44,8 +44,8 @@ const generateToken = function (email, role, callback) {
  * @return {Date} the expiry date
  */
 const generateExpiry = function () {
-    const issuedAt = new Date().getTime()
-    return new Date(issuedAt + 360000).getTime()
+    const issuedAt = new Date()
+    return new Date(Date.parse(issuedAt) + 3600000)
 } 
 
 /**
@@ -58,9 +58,25 @@ const verifyJWT = function(token, callback) {
     return jwt.verify(token, process.env.secretKey, {}, (error, decoded) => {
         if (error) callback({error:"Error decoding JWT"})
         else {
-            callback(null, decoded)
+            // Check the token is not expired
+            if (isExpired(decoded.exp)) {
+                callback({
+                    success: false,
+                    error: 'Token has expired. Please re-authenticate.'
+                })
+            }else callback(null, decoded)
         }
     })
+}
+
+/**
+ * Verifies if a token has expired
+ * @param {*} expiry JWT.exp variable
+ * @return true if the token is expired
+ */
+const isExpired = function (expiry) {
+    const now = new Date()
+    return !(expiry - Date.parse(now)) > 0
 }
 
 module.exports = {

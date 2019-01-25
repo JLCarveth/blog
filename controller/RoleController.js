@@ -33,8 +33,11 @@ module.exports.getPermissions = function (roleName, callback) {
 module.exports.checkPermission = function (permission, role, callback) {
     if (!permission || !role) callback({error: 'One or more parameters not provided.'})
     else {
-        RoleModel.findOne({role:role}, (error,result) => {
+        RoleModel.findOne({'role':role}, (error,result) => {
             if (error) callback(error)
+            else if (result == null) {
+                console.log('Roles have not been seeded!')
+            }
             else callback(null, result.permissions.includes(permission))
         })
     }
