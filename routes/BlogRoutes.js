@@ -5,10 +5,15 @@
  * Handles all of the routing for operations on blog post data
  */
 
-const BlogController = require('../controller').BlogController
-const AuthController = require('../controller').AuthController
+const BlogController    = require('../controller').BlogController
+const AuthController    = require('../controller').AuthController
+const RoleWare          = require('../middlewares').RoleWare
 
 module.exports = function (app) {
+
+    // Assign perm requirements to each applicable route
+    app.use('/api/post', new RoleWare('createPost'))
+    app.use('/api/post/approve', new RoleWare('approvePost'))
 
     /**
      * POST request to /api/post
@@ -22,6 +27,7 @@ module.exports = function (app) {
      *  - tags {String} The tags to be attached to the post for searching. Strings separated by commas
      */
     app.post('/api/post', (req,res) => {
+        // This route requires the user has the 'createPost' perm
         const title = req.body.title
         const subtitle = req.body.subtitle
         const authorEmail = process.env.tokenEmail
@@ -36,7 +42,7 @@ module.exports = function (app) {
 
         var author = ''
         // Get the ObjectID associated with the email address from the token
-        AuthController.getAuthorID(authorEmail, (error, result) => {
+        AuthController.getUserEmail(authorEmail, (error, result) => {
             if (error) {res.send({success:false, message:error})}
             else {
                 author = result

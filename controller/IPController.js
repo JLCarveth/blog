@@ -8,7 +8,7 @@
 /**
  * @const IPModel the mongoose.Model object
 */
-const IPModel = require('../models/').IPModel
+const IPModel = require('../models/').IP
 
 /**
  * @function
@@ -49,7 +49,7 @@ module.exports.unbanAddress = function (address, callback) {
  * @param {requestCallback} callback - handles the function response
  */
 module.exports.checkAddress = function (address, callback) {
-    if (!isIP(address)) { callback({success: false, message: 'IP address not valid.'})}
+    if (!isIP(address)) callback({success: false, message: 'IP address not valid.'})
     else IPModel.findOne({address:address}, (error, result) => {
         if (error) callback(error)
         else if (result == null) callback(null, false)

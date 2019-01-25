@@ -8,9 +8,13 @@
  * - /changePassword [POST]
  * - /deleteUser [POST]
  */
-const AuthController = require('../controller').AuthController
+const AuthController    = require('../controller').AuthController
+const RoleWare          = require('../middlewares').RoleWare
 
 module.exports = function (app) {
+    // Assign permissions to appropriate routes
+    app.use('/api/deleteUser', new RoleWare('deleteUser'))
+
     /**
      * POST request on /login
      * Params:
