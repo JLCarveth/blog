@@ -14,7 +14,6 @@ const auth = require('../util/auth')
  */
 module.exports = function (req,res,next) {
     const token = req.headers['x-access-token'] || req.cookies.token
-    console.log(`validateToken() - TOKEN: ${token}`)
     if (token) {
         auth.verifyJWT(token, (error, decoded) => {
             if (error) {

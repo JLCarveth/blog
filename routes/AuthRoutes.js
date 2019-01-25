@@ -29,7 +29,7 @@ module.exports = function (app) {
             res.status(422).send('Email or Password not provided')
         } else {
             AuthController.authenticateUser(email, password, (error, result) => {
-                if (error) res.json(error)
+                if (error) res.send({success:false, message:error})
                 else {
                     console.log(`Result: ${result}`)
                     const expiry = new Date().getTime()

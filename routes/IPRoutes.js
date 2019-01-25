@@ -14,6 +14,10 @@ const IPController = require('../controller').IPController
 const RoleWare = require('../middlewares').RoleWare
 
 module.exports = function (app) {
+    // Assign permissions to appropriate routes
+    app.use('/api/banip', new RoleWare('banip'))
+    app.use('/api/unbanip', new RoleWare('unbanip'))
+
     /**
      * POST request on /api/banip
      * Calls the RoleWare middleware before executing the rest of the logic.
@@ -21,7 +25,7 @@ module.exports = function (app) {
      * Params:
      *      address, [reason]
      */
-    app.post('/api/banip', RoleWare('banIP'), (req,res) => {
+    app.post('/api/banip', (req,res) => {
         console.log('POST request on /api/banip')
         const address = req.body.address
         const reason = req.body.reason
