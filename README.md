@@ -24,3 +24,5 @@ There are some cool things about this software that makes it a bit more interest
 - Limit failed password attempts to prevent brute force attacks.
 - Add function to check token expiration, since apparently the JWT lib doesn't do it, which is half the point of verifying tokens...
 - Commenting system
+- Routes for Role CRUD
+- ~~Update RoleWare to accept a single perm or an array~~
