@@ -32,7 +32,7 @@ module.exports.getPermissions = function (roleName, callback) {
  */
 module.exports.checkPermission = function (permission, role, callback) {
     if (!permission || !role) callback({error: 'One or more parameters not provided.'})
-    else if (Array.isArray(perms)) {
+    else if (Array.isArray(permission)) {
         var check = true
         perms.forEach((i) => {
             checkPermission(i, role, (error, result) => {
