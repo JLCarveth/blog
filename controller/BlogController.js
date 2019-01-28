@@ -140,13 +140,12 @@ module.exports.getPost = function (blogID, callback) {
  * Pushes a new comment to the array within the blog post.
  */
 module.exports.postComment = function (authorID, blogID, content, callback) {
-    BlogModel.findById(blogID, (error, result) => {
-        if (error) callback(error)
-        else {
-            result.createComment(authorID, content)
-            callback(null, true)
-        }
-    })
+    const comment = {'author':authorID, 'content':content}
+    BlogModel.findOneAndUpdate({'_id':blogID}, {$push: {comments:comment}},
+     (error, result) => {
+         if (error) callback(error)
+         else callback(null,result)
+     })
 }
 
 /**
