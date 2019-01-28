@@ -26,19 +26,100 @@ module.exports.getPermissions = function (roleName, callback) {
 /**
  * @function checkPermission
  * Checks if the provided role has been given the provided permission
- * @param {String} permission - the permission required by role
- * @param {String} role - the role which should contain permission
+ * @param {*} permission - the permission required by role, can either be single string, or array of perms.
+ * @param {String} role - the role which should contain permission.
  * @param {requestCallback} callback - handles the function response
  */
 module.exports.checkPermission = function (permission, role, callback) {
     if (!permission || !role) callback({error: 'One or more parameters not provided.'})
+    else if (Array.isArray(permission)) {
+        var check = true
+        perms.forEach((i) => {
+            checkPermission(i, role, (error, result) => {
+                if (error) callback(error)
+                check = result && check
+            })
+        })
+    }
     else {
         RoleModel.findOne({'role':role}, (error,result) => {
             if (error) callback(error)
             else if (result == null) {
-                console.log('Roles have not been seeded!')
+                console.error('Roles have not been seeded!')
             }
             else callback(null, result.permissions.includes(permission))
         })
     }
 }
+
+/**
+ * @function createRole
+ * Creates a new role with its own set of permissions.
+ * **NOTE**: if deleteRole exists, it must ensure no user has rank of role before
+ * it's deleted.
+ * @param {String} role - the name of the new role
+ * @param {Array} permissions - the permissions the role will have access to
+ */
+module.exports.createRole = function (role, permissions, callback) {
+    if (!role || !permissions) callback({error:'Missing parameters.'})
+    else {
+        const Role = {
+            'role':role,
+            'permissions':permissions
+        }
+        RoleModel.create(Role, (error, result) => {
+            if (error) callback(error)
+            else callback(null, result)
+        })
+    }
+}
+
+/**
+ * @function assignPermission
+ * Assigns a new permission to an existing role
+ * @param {String} role - the role to which a permission will be granted
+ * @param {*} permission - the permission(s) to grant to role. Can be array or string
+ */
+module.exports.assignPermission = function (role, permission, callback) {
+    if (!role || !permission) callback({error:'Missing parameters'})
+    else {
+        if (typeof permission == 'string') {
+            RoleModel.findOneAndUpdate({'role':role}, {$push: {permissions:permission}}, 
+            (error, result) => {
+                if (error) callback(error)
+                else callback(result)
+            })
+        } else if (Array.isArray(permission)) {
+            RoleModel.findOneAndUpdate({'role':role}, {$push: {permissions: {$each:permission}}}, 
+            (error, result) => {
+                if (error) callback(error)
+                else callback(result)
+            })
+        }
+    }
+}
+
+/**
+ * @function revokePermission
+ * Revokes a set of permissions from an existing role
+ */
+module.exports.revokePermission = function (role, permission, callback) {
+    if (!role || !permission) callback({error:'Missing parameters'})
+    else {
+        if (typeof permission == 'string') {
+            RoleModel.findOneAndUpdate({'role':role}, {$push: {permissions:permission}}, 
+            (error, result) => {
+                if (error) callback(error)
+                else callback(result)
+            })
+        } else if (Array.isArray(permission)) {
+            RoleModel.findOneAndUpdate({'role':role}, {$pull: {permissions: {$each:permission}}}, 
+            (error, result) => {
+                if (error) callback(error)
+                else callback(result)
+            })
+        }
+    }
+}
+
+

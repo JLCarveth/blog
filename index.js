@@ -40,7 +40,7 @@ mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
 const routes = require('./routes')(app)
 
 // Seed all initial data for the system
-Seeder.connect(process.env.mongodbURI, () => {
+Seeder.connect(process.env.mongodbURI, {useNewUrlParser:true}, () => {
     // Seed the roles then sever the connection
     Seeder.seedData(seedData.roleData, Seeder.disconnect)
 })

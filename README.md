@@ -1,4 +1,5 @@
 **blog - Node.js Blog Backend**  
+**This is in no way fully functional yet**
 
 A backend system that uses web requests to create, manage, sort
 and distribute blog posts.   
@@ -17,10 +18,13 @@ There are some cool things about this software that makes it a bit more interest
       
 **TODO:**
 - Force accounts to be verified before any actions can be performed (verify via email code).
-- ~~Implement an IP blocking functionality, with routes to add/remove IPs.~~ (Needs Testing...)
-- Functions to remove accounts (for administrators).
-- ~~Update auth middleware to check for cookies as well (for easy web browsing)~~ (Needs testing)
-- ~~Implement role-based access control for all actions.~~ (Needs testing but works)
+- Improve commenting system to detect / prevent spam
+- ~~Routes for Role CRUD~~
 - Limit failed password attempts to prevent brute force attacks.
-- Add function to check token expiration, since apparently the JWT lib doesn't do it, which is half the point of verifying tokens...
-- Commenting system
+- ~~Update auth middleware to check for cookies as well (for easy web browsing)~~ (Needs testing)
+- ~~Add function to check token expiration, since apparently the JWT lib doesn't do it, which is half the point of verifying tokens...~~ (Needs testing)
+- ~~Implement role-based access control for all actions.~~
+- ~~Update RoleWare to accept a single perm or an array~~
+- ~~Replace bad process.env usage, I was dumb and tried to use it to pass data between middlewares instead of using req like a normal person.~~
+- ~~Functions to remove accounts (for administrators).~~
+- ~~Implement an IP blocking functionality, with routes to add/remove IPs.~~ (Needs Testing...)

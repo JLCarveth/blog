@@ -15,7 +15,6 @@ const jwt = require('jsonwebtoken')
  * @param {function} requestCallback - Handles the function response.
  */
 const generateToken = function (email, role, callback) {
-    const issuedAt = new Date().getTime()
     // Expiry is 24h from issuedAt
     const expiry = generateExpiry()
     const payload = {
@@ -23,13 +22,14 @@ const generateToken = function (email, role, callback) {
         "exp": expiry,
         "role": role
     }
+    console.log('EXP' + expiry)
     jwt.sign(payload, process.env.secretKey, {
         algorithm : "HS512"
     }, (error, token) => {
         if (error) {
             callback({
                 error:error,
-                message:"Error generating token"
+                message:"WTF"
             })
         } else { 
             callback(null, token)
@@ -45,7 +45,7 @@ const generateToken = function (email, role, callback) {
  */
 const generateExpiry = function () {
     const issuedAt = new Date()
-    return new Date(Date.parse(issuedAt) + 3600000)
+    return Date.parse(new Date(Date.parse(issuedAt) + 3600000))
 } 
 
 /**

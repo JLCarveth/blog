@@ -17,7 +17,7 @@ const RoleController = require('../controller').RoleController
  */
 const RoleWare = function (perm) {
     return function (req, res, next) {
-        RoleController.checkPermission(perm, process.env.tokenRole, (error, result) => {
+        RoleController.checkPermission(perm, req.tokenRole, (error, result) => {
             if (error) res.status(401).send({
                 success: false,
                 message: 'Authentication has failed.'
