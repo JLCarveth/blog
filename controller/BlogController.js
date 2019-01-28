@@ -149,6 +149,36 @@ module.exports.postComment = function (authorID, blogID, content, callback) {
 }
 
 /**
+ * @function removeAllComments
+ * Looks for any comment with the given authorID posted to the blog post with id blogID
+ * Removes any comments by the authorID on blogID
+ * @param {mongoose.SchemaTypes.ObjectID} authorID - author of the comment to delete
+ * @param {mongoose.SchemaTypes.ObjectID} blogID - the ID of the post where the comment was made
+ */
+module.exports.removeAllComments = function (authorID, blogID, callback) {
+    BlogModel.findOneAndUpdate({'_id':blogID}, {$pull: {comments:authorID}},
+    (error, callback) => {
+        if (error) callback(error)
+        else callback(null,result)
+    })
+}
+
+/**
+ * @function removeComment
+ * Removes the comment with given commentID from the matching blog post, if it exists
+ * @param {mongoose.SchemaTypes.ObjectID} commentID - the ObjectID of the comment to remove
+ * @param {mongoose.SchemaTypes.ObjectID} blogID - the ObjectID of the blog post where the comment was made
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.removeComment = function (commentID, blogID, callback) {
+    BlogModel.findOneAndUpdate({'_id':blogID}, {$pull: {comments:commentID}},
+    (error, callback) => {
+        if (error) callback(error)
+        else callback(null,result)
+    })
+}
+
+/**
  * @function compileTags
  * 
  * Utility function for creating the tag array
