@@ -23,8 +23,8 @@ module.exports = function (req,res,next) {
                 })
             } else {
                 // Register the token to the process environment
-                process.env.tokenEmail = decoded.email
-                process.env.tokenRole = decoded.role
+                req.tokenEmail = decoded.email
+                req.tokenRole = decoded.role
                 next()
             }
         })

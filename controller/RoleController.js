@@ -45,7 +45,7 @@ module.exports.checkPermission = function (permission, role, callback) {
         RoleModel.findOne({'role':role}, (error,result) => {
             if (error) callback(error)
             else if (result == null) {
-                console.log('Roles have not been seeded!')
+                console.error('Roles have not been seeded!')
             }
             else callback(null, result.permissions.includes(permission))
         })

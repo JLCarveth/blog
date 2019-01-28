@@ -103,24 +103,13 @@ module.exports = function (app) {
      *      x-access-token - The token acquired from authentication
      */
     app.post('/api/deleteUser', (req,res) => {
+        console.log('POST request on /deleteUser')
         const email = req.body.email
-        console.log('Body Email ' + email)
         
-        // If the email to delete is the email of the authenticated user,
-        // Or if the user authenticated is an admin, delete user
-        console.log(`Token: ${process.env.tokenEmail}, Admin: ${process.env.tokenIsAdmin}`)
-        if ((email == process.env.tokenEmail) ||
-            (process.env.tokenIsAdmin == true)) {
-                AuthController.deleteUser(email, (error, result) => {
-                    if (error) res.send(error)
-                    else res.send(result)
-                })
-        } else {
-            res.send({
-                success: false,
-                message: 'Error deleting user'
-            })
-        }
+        AuthController.deleteUser(email, (error, result) => {
+            if (error) res.send(error)
+            else res.send(result)
+        })
     })
 
 }

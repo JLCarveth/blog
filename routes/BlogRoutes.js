@@ -30,7 +30,8 @@ module.exports = function (app) {
         // This route requires the user has the 'createPost' perm
         const title = req.body.title
         const subtitle = req.body.subtitle
-        const authorEmail = process.env.tokenEmail
+        // tokenEmail is set by AuthWare
+        const authorEmail = req.tokenEmail
         const content = req.body.content
         const tags = req.body.tags
 
@@ -69,16 +70,7 @@ module.exports = function (app) {
      * */
     app.post('/api/post/approve', (req,res) => {
         const blogID = req.body.blogID
-
-        // If the user does not have administrator rights, or somehow 
-        // The environment variable is null (meaning auth failed)
-        if (!process.env.tokenIsAdmin) {
-            return res.status(401).send({
-                success: false,
-                message: 'Action requires administrator rights.'
-            }) 
-        }
-
+        
         BlogController.approvePost(blogID, (error, result) => {
             if (error) res.send({
                 success: false,
@@ -122,6 +114,9 @@ module.exports = function (app) {
     /**
      * GET request to /blog/b/:id
      * Gets a specific blog post by its ID.
+     * 
+     * Params:
+     *      - author
      */
     app.get('/blog/b/:id', (req,res) => {
         const id = req.params.id
@@ -132,6 +127,28 @@ module.exports = function (app) {
             BlogController.getPost(id, (error, result) => {
                 if (error) res.send({success:false, message:error})
                 else res.send({success:true, message:result})
+            })
+        }
+    })
+
+    /**
+     * POST request to /blog/comment
+     * Posts a comment to the blog post with matching ID.
+     * 
+     * Params:
+     *      - author, blogpost, content
+     */
+    app.post('/api/blog/comment', (req,res) => {
+        const authorID = req.body.author
+        const blogID = req.body.blogpost
+        const content = req.body.content
+
+        if (!authorID || !blogID || !content) {
+            res.status(400).send({success:false,message:'Missing parameters'})
+        } else {
+            BlogController.postComment(authorID,blogID,content, (error, result) => {
+                if (error) res.send({success:false,message:error})
+                else res.send({success:true, message:'Comment has been posted.'})
             })
         }
     })

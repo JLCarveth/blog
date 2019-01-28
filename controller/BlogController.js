@@ -11,7 +11,7 @@
  const BlogModel = require('../models').Blog
 
 /**
- * @function
+ * @function createBlogPost
  * Creates a new, unapproved blog post
  * @param {String} title - the title of the new blog post
  * @param {String} subtitle - the optional subtitle
@@ -44,7 +44,7 @@ module.exports.createBlogPost = function (title,
 }
 
 /**
- * @function
+ * @function approvePost
  * Approves a blog post with the given ID
  * @param {ObjectID} blogID - the ID of the unapproved blog post
  * @param {requestCallback} callback - handles the function response.
@@ -57,7 +57,7 @@ module.exports.approvePost = function (blogID, callback) {
 }
 
 /**
- * @function
+ * @function getPost
  * Get a blog post by its ID
  *
  * @param {ObjectID} postID - the ID of the blog to fetch
@@ -71,7 +71,7 @@ module.exports.getPost = function (blogID, callback) {
 }
 
 /**
- * @function
+ * @function updatePost
  * Updates a blog post. Any element of the blog post object can be changed except the ID
  * One should call getPost(), update the returned post object, then pass the updated
  * object to this function to make the change.
@@ -98,7 +98,7 @@ module.exports.updatePost = function (blog, callback) {
 }
 
 /**
- * @function
+ * @function fetchRecent
  * Gets at most five of the most recent approved posts within the collection.
  * @param {requestCallback} callback - handles the function response.
  */
@@ -110,7 +110,7 @@ module.exports.fetchRecent = function (callback) {
 }
 
 /**
- * @function
+ * @function getPostsByAuthor
  * Get all blog posts made by a certain author.
  * @param {ObjectID} authorID - The ID of the author
  * @param {requestCallback} callback - handles the function response.
@@ -123,20 +123,34 @@ module.exports.getPostsByAuthor = function (authorID, callback) {
 }
 
 /**
- * @function
+ * @function getPost
  * Fetches a single blog post by ID from the collection.
- * @param {ObjectID} postID - the ObjectID of the post to get.
+ * @param {ObjectID} blogID - the ObjectID of the post to get.
  * @param {requestCallback} callback - handles the function response.
  */
-module.exports.getPost = function (postID, callback) {
-    BlogModel.findById({_id:postID}, (error, result) => {
+module.exports.getPost = function (blogID, callback) {
+    BlogModel.findById({_id:blogID}, (error, result) => {
         if (error) callback(error)
         else callback(null, result)
     })
 }
 
 /**
- * @function
+ * @function postComment
+ * Pushes a new comment to the array within the blog post.
+ */
+module.exports.postComment = function (authorID, blogID, content, callback) {
+    BlogModel.findById(blogID, (error, result) => {
+        if (error) callback(error)
+        else {
+            result.createComment(authorID, content)
+            callback(null, true)
+        }
+    })
+}
+
+/**
+ * @function compileTags
  * 
  * Utility function for creating the tag array
  * @param {String} tagString - String of tags separated by commas

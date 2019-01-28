@@ -1,4 +1,5 @@
 **blog - Node.js Blog Backend**  
+**This is in no way fully functional yet**
 
 A backend system that uses web requests to create, manage, sort
 and distribute blog posts.   
@@ -16,6 +17,7 @@ There are some cool things about this software that makes it a bit more interest
     
       
 **TODO:**
+- Replace bad process.env usage, I was dumb and tried to use it to pass data between middlewares instead of using req like a normal person.
 - Force accounts to be verified before any actions can be performed (verify via email code).
 - ~~Implement an IP blocking functionality, with routes to add/remove IPs.~~ (Needs Testing...)
 - Functions to remove accounts (for administrators).

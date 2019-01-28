@@ -27,7 +27,6 @@ module.exports.authenticateUser = function (email, password, callback) {
     UserModel.authenticate(email, password, (error, result) => {
         if (error) { callback(error) }
         else if (result) {
-            console.log('Result was true, were authenticated')
             // Store the returned role in the token
             auth.generateToken(email, result.role, (error, token) => {
                 if (error) callback(error)
