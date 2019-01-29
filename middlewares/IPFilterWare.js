@@ -12,7 +12,7 @@ const IPController = require('../controller').IPController
  */
 // When we initialize a new IPFilterWare, cache the banned IPs
 const IPFilterWare = function () {
-    that = this
+    that = this // Scope needed for the inline middleware decl
     IPController.generateCache((error, cache) => {
         if (error) console.error('Issue caching addresses. ' + error)
         else {
@@ -24,7 +24,7 @@ const IPFilterWare = function () {
     return function (req, res, next) {
         const ip = req.ip
 
-        // Ensure to trim any 
+        // Ensure to trim any silly bits
         if (ip.substr(0,7) == '::ffff:') {
             ip = ip.substr(7)
         }
@@ -53,10 +53,17 @@ IPFilterWare.prototype.refreshCache = function () {
     })
 }
 
+/**
+ * @function checkAddress
+ * Checks an incomming IP address against the cached IP addresses. 
+ * A `true` result means the IP was found in the list of banned addresses.
+ * @param {String} address - the IP address
+ * @param {requestCallback} callback - handles the function response
+ */
 IPFilterWare.prototype.checkAddress = function (address, callback) {
     var contains = false
     this.cache.forEach((i) => {
-        console.log(i)
+        if (i.address == address) contains = true 
     })
 
     callback(null, contains)
