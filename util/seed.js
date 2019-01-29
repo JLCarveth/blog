@@ -9,7 +9,7 @@
  * Dependencies
  */
 var mongoose = require('mongoose')
-
+mongoose.Promise = Promise
 /**
  * @class Seeder
  */
@@ -50,7 +50,7 @@ Seeder.prototype.connect = function (...params) {
             if (error) console.error('Could not make connection to MongoDB')
             else {
                 that.connected = true
-                cb();
+                cb()
             }
         })
     }
@@ -65,18 +65,18 @@ Seeder.prototype.connect = function (...params) {
 Seeder.prototype.seedData = function (data, callback) {
     if (this.connected == false) {
         console.error('Not connected to MongoDB.')
+    } else {
+        // Stores all promises to be resolved
+        var promises = []
+        // Fetch the model via its name string from mongoose
+        const Model = mongoose.model(data.model)
+        // For each object in the 'documents' field of the main object
+        data.documents.forEach((item) => {
+            promises.push(promise(Model, item))
+        })
+        // Fulfil each Promise in parallel
+        Promise.all(promises).then(callback).catch(()=>{})
     }
-    // Stores all promises to be resolved
-    var promises = []
-    // Fetch the model via its name string from mongoose
-    const Model = mongoose.model(data.model)
-    // For each object in the 'documents' field of the main object
-    data.documents.forEach((item) => {
-        promises.push(promise(Model, item))
-    })
-    // Fulfil each Promise in parallel
-    Promise.all(promises).catch(()=>{})
-    //callback();
 }
 
 /**
@@ -90,34 +90,29 @@ Seeder.prototype.disconnect = function () {
 }
 
 /**
- * Generates a Promise that seeds an item to model
+ * Generates a Promise that seeds item to model
  * @param {mongoose.Model} model 
  * @param {Object} item 
  */
 const promise = function (model, item) {
     return new Promise((resolve, reject) => {
+        // To accurately query MongoDB, we need to extract a column name and value
         var key = Object.keys(item)[0]
         var value = item[key]
-        model.findOne({
-                key:value
-            }, (error, result) => {
-            if (error) {
-                console.log('Failed at findOne ' + JSON.stringify(item) + result)
-                reject()
-            } else {
-                if (result == null) {
-                    model.create(item, (error, result) => {
-                        if (error) {
-                            console.log('Failed at create ' + JSON.stringify(item))
-                            reject()
-                        } else resolve()
-                    })
-                } else  {
+        // Calling {key:value} inline doesn't work
+        var queryParams = {}
+        queryParams[key] = value
+
+        model.findOne(queryParams).then((result) => {
+            if (result == null) {
+                model.create(item).then((result) => {
                     resolve()
-                }
+                }).catch((error) => {reject()})
+            } else  {
+                resolve()
             }
-        })
+        }).catch((error) => {reject()})
     })
 }
 
-module.exports = new Seeder()
+module.exports = Seeder

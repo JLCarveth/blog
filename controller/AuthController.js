@@ -145,3 +145,16 @@ module.exports.deleteUser = function (email, callback) {
         })
     })
 }
+
+/**
+ * @function verifyUser
+ * Verifies a user account, so they can perform actions
+ * @param {String} code - the unique code used for verification
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.verifyUser = function (code, callback) {
+    UserModel.findOneAndUpdate({'_id': {$regex: /code/}}, {'verified':true}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}

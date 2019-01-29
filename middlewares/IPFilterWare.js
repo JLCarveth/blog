@@ -17,7 +17,6 @@ const IPFilterWare = function () {
         if (error) console.error('Issue caching addresses. ' + error)
         else {
             this.cache = cache
-            console.log(JSON.stringify(cache))
         }
     })
 

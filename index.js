@@ -8,7 +8,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 
-const Seeder = require('./util').seed
+const seed = require('./util').seed
 const seedData = require('./data.js')
 
 /**
@@ -38,7 +38,7 @@ mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
 
 // Initiate the other routes
 const routes = require('./routes')(app)
-
+const Seeder = new seed()
 // Seed all initial data for the system
 Seeder.connect(process.env.mongodbURI, {useNewUrlParser:true}, () => {
     // Seed the roles then sever the connection

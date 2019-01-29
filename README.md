@@ -12,15 +12,13 @@ There are some cool things about this software that makes it a bit more interest
             `app.use('/api/deleteUser', new RoleWare('deleteUser'))`
     This line of code would require that any user making a request to `/api/deleteUser` must have a role with the permission `deleteUser`.
 
-- *IPFilterWare*: This is a far more simple middleware, it allows the blocking of IP addresses.
+- *IPFilterWare*: This is a far more simple middleware, it allows the blocking of IP addresses. A recent update now allows for all banned IPs to be fetched from the database once, reducing superfluous db calls.
 - *AuthWare*: A very simple authentication middleware that checks incoming requests for valid tokens.
     
       
 **TODO:**
 - Force accounts to be verified before any actions can be performed (verify via email code).
 - Improve commenting system to detect / prevent spam
-- Modify IPFilterWare to cache the banned IPs on startup, to prevent making MongoDB calls on every single request. That should reduce the performance overhead so IPFilterWare can be applied to all routes.
-- ~~Routes for Role CRUD~~
 - Limit failed password attempts to prevent brute force attacks. This will be accomplished by a middleware that can be selectively applied to routes prone to malicious activity (login)
 - ~~Update auth middleware to check for cookies as well (for easy web browsing)~~ (Needs testing)
 - ~~Add function to check token expiration, since apparently the JWT lib doesn't do it, which is half the point of verifying tokens...~~ (Needs testing)
@@ -29,3 +27,5 @@ There are some cool things about this software that makes it a bit more interest
 - ~~Replace bad process.env usage, I was dumb and tried to use it to pass data between middlewares instead of using req like a normal person.~~
 - ~~Functions to remove accounts (for administrators).~~
 - ~~Implement an IP blocking functionality, with routes to add/remove IPs.~~ (Needs Testing...)
+- ~~Routes for Role CRUD~~
+- ~~Modify IPFilterWare to cache the banned IPs on startup, to prevent making MongoDB calls on every single request. That should reduce the performance overhead so IPFilterWare can be applied to all routes.~~
