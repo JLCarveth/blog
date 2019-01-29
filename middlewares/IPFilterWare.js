@@ -10,23 +10,56 @@ const IPController = require('../controller').IPController
  * @param {Object} res - the Express.js response object
  * @param {Function} next - the Express.js middleware-chaining function
  */
-module.exports = function (req,res,next) {
-    const ip = req.ip
-
-    // Ensure to trim any 
-    if (ip.substr(0,7) == '::ffff:') {
-        ip = ip.substr(7)
-    }
-
-    IPController.checkAddress(ip, (error, result) => {
-        if (error || result == false) next()
+// When we initialize a new IPFilterWare, cache the banned IPs
+const IPFilterWare = function () {
+    that = this
+    IPController.generateCache((error, cache) => {
+        if (error) console.error('Issue caching addresses. ' + error)
         else {
-            // The IP was found on the blacklist...
-            res.status(403).send({
-                success: false,
-                message: "Unauthorized."
-            })
+            this.cache = cache
+            console.log(JSON.stringify(cache))
         }
     })
-    
+
+    return function (req, res, next) {
+        const ip = req.ip
+
+        // Ensure to trim any 
+        if (ip.substr(0,7) == '::ffff:') {
+            ip = ip.substr(7)
+        }
+
+        that.checkAddress(ip, (error, result) => {
+            if (result == false) next()
+            else {
+                // The IP was found on the blacklist...
+                res.status(403).send({
+                    success: false,
+                    message: "Unauthorized."
+                })
+            }
+        })
+    }
 }
+
+IPFilterWare.prototype.refreshCache = function () {
+    this.cache = {}
+    IPController.generateCache((error, cache) => {
+        if (error) console.error('Issue caching addresses. ' + error)
+        else {
+            this.cache = cache
+            console.log(JSON.stringify(cache))
+        }
+    })
+}
+
+IPFilterWare.prototype.checkAddress = function (address, callback) {
+    var contains = false
+    this.cache.forEach((i) => {
+        console.log(i)
+    })
+
+    callback(null, contains)
+}
+
+module.exports = IPFilterWare

@@ -58,6 +58,18 @@ module.exports.checkAddress = function (address, callback) {
 }
 
 /**
+ * @function generateCache
+ * Fetches all banned IPs at once, to prevent multiple subbsequent calls every request
+ * @param {requestCallback} callback - handles the function response.
+ */
+module.exports.generateCache = function (callback) {
+    IPModel.find({}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+/**
  * @private
  * @function 
  * Verifies the validity of an IP address.

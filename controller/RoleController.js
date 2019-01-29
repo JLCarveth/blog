@@ -1,7 +1,7 @@
 /**
  * @module RoleController
  * @author John L. Carveth
- * This module represents the logic layer for permission management
+ * This module represents the logic layer for permission/role management
  * 
  * @callback requestCallback - (error, result) handles the function responses
  */
@@ -42,6 +42,7 @@ module.exports.checkPermission = function (permission, role, callback) {
         })
     }
     else {
+        console.log('Role ' + role + permission)
         RoleModel.findOne({'role':role}, (error,result) => {
             if (error) callback(error)
             else if (result == null) {

@@ -21,7 +21,7 @@ const AuthWare = require('./middlewares').AuthWare
 const IPFilterWare = require('./middlewares').IPFilterWare
 
 // All requests must be filtered to check for banned IPs
-//app.use('*', IPFilterWare)
+app.use('*', new IPFilterWare())
 // All requests to the API must be authenticated with a token.
 app.use('/api/', AuthWare)
 // To be able to read JSON data

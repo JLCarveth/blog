@@ -96,7 +96,11 @@ Seeder.prototype.disconnect = function () {
  */
 const promise = function (model, item) {
     return new Promise((resolve, reject) => {
-        model.findOne(item, (error, result) => {
+        var key = Object.keys(item)[0]
+        var value = item[key]
+        model.findOne({
+                key:value
+            }, (error, result) => {
             if (error) {
                 console.log('Failed at findOne ' + JSON.stringify(item) + result)
                 reject()
