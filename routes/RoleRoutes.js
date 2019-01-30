@@ -46,7 +46,7 @@ module.exports = function (app) {
      * POST request on /api/assignPermission
      * Params:
      * - role {String} - the name of the role to modify
-     * - permission {String} - the permission(s) to grant
+     * - permission {String} - the permission(s) to grant. Each permission separated by commas
      */
     app.post('/api/assignPermission', (req,res) => {
         console.log('POST request on /api/assignPermission')

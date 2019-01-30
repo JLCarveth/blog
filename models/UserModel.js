@@ -44,41 +44,11 @@ const UserSchema = new Schema({
     role: {
         type: String,
         default: 'user'
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 })
-
-/**
- * @callback requestCallback - for handling the function response
- */
-/**
- * @function authenticate
- * Authenticates a login attempt. Now returns the users role if successful.
- * @param {string} email - the email address of the user trying to authenticate
- * @param {string} password - the password attempt
- * @param {requestCallback} callback - handles the response
- * 
- */
-UserSchema.statics.authenticate = function (email, password, callback) {
-    this.findOne({'email':email}, function (error, user) {
-        if (error) { callback({
-            error: error,
-            message: "User with that email address could not be found."
-        })} else {
-            if (user) {
-                const result = crypto.validateInput(password, user.password, user.salt)
-                if (result) {
-                    callback(null, {
-                        role: user.role
-                    })
-                } else callback({success:false, message:"Authentication Failed."})
-            } else {
-                callback({
-                    success: false,
-                    message: 'No such user was found.'
-                })
-            }
-        }
-    })
-}
 
 module.exports = UserSchema

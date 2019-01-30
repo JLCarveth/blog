@@ -16,23 +16,55 @@ const UserModel = require('../models').User
  */
 
 /**
+ * @var failures tracks failed login attempts
+ */
+var failures = new Map()
+
+/**
  * @function authenticateUser
  * Authenticates credentials provided by a client against the MongoDB / Mongoose Collections
  * If the user was authenticated successfully, a JWT is sent back as result in callback()
+ * Also tracks failed attempts
  * @param {string} email - The email of the user trying to authenticate
  * @param {sring} password - The password of the user trying to authenticate
  * @param {function} requestCallback - Handles the response
  */
-module.exports.authenticateUser = function (email, password, callback) {
-    UserModel.authenticate(email, password, (error, result) => {
-        if (error) { callback(error) }
-        else if (result) {
-            // Store the returned role in the token
-            auth.generateToken(email, result.role, (error, token) => {
-                if (error) callback(error)
-                else callback(null,token)
-            })
-        } else callback({error: "Invalid email address or password."})
+module.exports.authenticateUser = function (ip, email, password, callback) {
+    if (failures.get(ip) != null) {
+        var fail = failures.get(ip)
+        var now = new Date()
+        console.log('Fail: ' + JSON.stringify(fail))
+        // If the IP has already failed 5 times this hour...
+        if (fail.attempts > 4) {
+            callback('Too many failed attempts. Try again later.')
+        } else if ((now - fail.lastFailure) > 3600000) { // Last failed attempt was over an hour ago
+            failures.delete(ip)
+        }
+    }
+
+    UserModel.findOne({'email':email}, (error, result) => {
+        if (error) callback(error)
+        else {
+            valid = crypto.validateInput(password, result.password, result.salt)
+            if (!valid) {
+                console.log('Invalid')
+                // If the authentication failed (incorrect credentials)
+                if (failures.get(ip) == null) { // Assuming first failure
+                    failures.set(ip, {attempts:1, lastFailure:new Date()})
+                } else { // If they've failed recently.
+                    params = failures.get(ip)
+                    params.attempts++
+                    params.lastFailure = new Date()
+                    failures.set(ip, params)
+                }
+                callback('Authentication failed.')
+            } else {
+                auth.generateToken(result.email, result.role, (error,result) => {
+                    if (error) callback(error)
+                    else callback(null, result)
+                })
+            }
+        }
     })
 }
 
@@ -56,7 +88,7 @@ module.exports.registerUser = function (email, username, password, callback) {
         if (error) {
             callback({error:'Error creating user.'})
         }
-        else callback(null, user)
+        else callback(null, user) // TODO Send the verification email
     })
 }
 
@@ -144,4 +176,26 @@ module.exports.deleteUser = function (email, callback) {
             sucesss: true
         })
     })
+}
+
+/**
+ * @function verifyUser
+ * Verifies a user account, so they can perform actions
+ * @param {String} code - the unique code used for verification
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.verifyUser = function (code, callback) {
+    UserModel.findOneAndUpdate({'_id': {$regex: /code/}}, {'verified':true}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+/**
+ * @function sendVerificationCode
+ * Sends a code to a unverified user's email, proving they own the email address.
+ * @param {String} code - the 
+ */
+module.exports.sendVerificationCode = function (code, callback) {
+
 }

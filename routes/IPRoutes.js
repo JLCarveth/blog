@@ -45,7 +45,7 @@ module.exports = function (app) {
      * Params:
      *      address
      */
-    app.post('/api/unbanip', RoleWare('unbanIP'), (req,res) => {
+    app.post('/api/unbanip', (req,res) => {
         console.log('POST request on /api/unbanip')
 
         const address = req.body.address
