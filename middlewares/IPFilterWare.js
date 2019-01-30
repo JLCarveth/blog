@@ -10,15 +10,10 @@ const IPController = require('../controller').IPController
  * @param {Object} res - the Express.js response object
  * @param {Function} next - the Express.js middleware-chaining function
  */
-// When we initialize a new IPFilterWare, cache the banned IPs
 const IPFilterWare = function () {
-    that = this // Scope needed for the inline middleware decl
-    IPController.generateCache((error, cache) => {
-        if (error) console.error('Issue caching addresses. ' + error)
-        else {
-            this.cache = cache
-        }
-    })
+    this.cache = {}
+    that = this // Scope needed for the middleware decl
+    this.refreshCache()
 
     return function (req, res, next) {
         const ip = req.ip

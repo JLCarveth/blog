@@ -25,19 +25,18 @@ module.exports = function (app) {
         const email = req.body.email
         const password = req.body.password
 
-        if (!email || ! password) {
+        if (!email || !password) {
             res.status(422).send('Email or Password not provided')
         } else {
-            AuthController.authenticateUser(email, password, (error, result) => {
+            AuthController.authenticateUser(req.ip, email, password, (error, result) => {
                 if (error) res.send({success:false, message:error})
                 else {
-                    console.log(`Result: ${result}`)
                     const expiry = new Date().getTime()
                     res.cookie('token', result, {
                         secure: true,
-                         httpOnly:true,
+                        httpOnly:true,
                         expiry: new Date(expiry + 360000).getTime()})
-                    res.json(result)
+                    res.send(result)
                 }
              })
         }
@@ -82,7 +81,7 @@ module.exports = function (app) {
         if (!email || !oldPass || !newPass) {
             res.send('Email, password, or new password not provided.')
         } else {
-            AuthController.authenticateUser(email, oldPass, (error, result) => {
+            AuthController.authenticateUser(req.ip, email, oldPass, (error, result) => {
                 if (error) res.send(error)
                 else {
                     AuthController.changePassword(email, newPass, (error, result) => {

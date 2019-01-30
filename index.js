@@ -29,6 +29,14 @@ app.use(bodyParser.json())
 // To read body params
 app.use(bodyParser.urlencoded({extended:true}))
 
+// Seed the necessary data to MongoDB
+const Seeder = new seed()
+// Seed all initial data for the system
+Seeder.connect(process.env.mongodbURI, {useNewUrlParser:true}, () => {
+    // Seed the roles then sever the connection
+    Seeder.seedData(seedData.roleData, () => {})
+})
+
 // To avoid the 'deprecated url parser' warning...
 mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
     if (error) {
@@ -38,12 +46,6 @@ mongoose.connect(process.env.mongodbURI, {useNewUrlParser:true}, (error) => {
 
 // Initiate the other routes
 const routes = require('./routes')(app)
-const Seeder = new seed()
-// Seed all initial data for the system
-Seeder.connect(process.env.mongodbURI, {useNewUrlParser:true}, () => {
-    // Seed the roles then sever the connection
-    Seeder.seedData(seedData.roleData, Seeder.disconnect)
-})
 
 app.listen(3000, () => {
     console.log('Listening...')
