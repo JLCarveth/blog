@@ -123,4 +123,16 @@ module.exports.revokePermission = function (role, permission, callback) {
     }
 }
 
+/**
+ * @function generateCache
+ * Fetches and stores a cache of the roles stored in the DB
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.generateCache = function (callback) {
+    RoleModel.find({}, (error, result) => {
+        if (error) callback(error)
+        else callback(null,result)
+    })
+}
+
 

@@ -111,4 +111,13 @@ module.exports = function (app) {
         })
     })
 
+    /**
+     * 
+     */
+    app.get('/api/verify/:code', (req,res) => {
+        const code = req.params.code
+        console.log('GET request on /api/verify/' + code)
+        
+    })
+
 }

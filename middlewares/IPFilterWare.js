@@ -12,17 +12,15 @@ const IPController = require('../controller').IPController
  */
 const IPFilterWare = function () {
     this.cache = {}
-    that = this // Scope needed for the middleware decl
     this.refreshCache()
+    var that = this // Scope needed for the middleware decl
 
     return function (req, res, next) {
         const ip = req.ip
-
         // Ensure to trim any silly bits
         if (ip.substr(0,7) == '::ffff:') {
             ip = ip.substr(7)
         }
-
         that.checkAddress(ip, (error, result) => {
             if (result == false) next()
             else {
@@ -39,11 +37,8 @@ const IPFilterWare = function () {
 IPFilterWare.prototype.refreshCache = function () {
     this.cache = {}
     IPController.generateCache((error, cache) => {
-        if (error) console.error('Issue caching addresses. ' + error)
-        else {
-            this.cache = cache
-            console.log(JSON.stringify(cache))
-        }
+        if (error) console.error(error)
+        else this.cache = cache
     })
 }
 

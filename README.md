@@ -17,8 +17,9 @@ There are some cool things about this software that makes it a bit more interest
     
       
 **TODO:**
-- Force accounts to be verified before any actions can be performed (verify via email code).
+- Force accounts to be verified before any actions can be performed (verify via email code, though that will require external libraries / servers).
 - Improve commenting system to detect / prevent spam
+- Implement the same caching mechanism used in IPFilterWare in RoleWare
 - ~~Limit failed password attempts to prevent brute force attacks.~~
 - ~~Update auth middleware to check for cookies as well (for easy web browsing)~~ (Needs testing)
 - ~~Add function to check token expiration, since apparently the JWT lib doesn't do it, which is half the point of verifying tokens...~~ (Needs testing)

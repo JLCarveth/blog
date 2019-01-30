@@ -49,9 +49,9 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
             if (!valid) {
                 console.log('Invalid')
                 // If the authentication failed (incorrect credentials)
-                if (failures.get(ip) == null) {
+                if (failures.get(ip) == null) { // Assuming first failure
                     failures.set(ip, {attempts:1, lastFailure:new Date()})
-                } else {
+                } else { // If they've failed recently.
                     params = failures.get(ip)
                     params.attempts++
                     params.lastFailure = new Date()
@@ -59,8 +59,10 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
                 }
                 callback('Authentication failed.')
             } else {
-                console.log('Hmm')
-                callback(null, {role: result.role})
+                auth.generateToken(result.email, result.role, (error,result) => {
+                    if (error) callback(error)
+                    else callback(null, result)
+                })
             }
         }
     })
@@ -86,7 +88,7 @@ module.exports.registerUser = function (email, username, password, callback) {
         if (error) {
             callback({error:'Error creating user.'})
         }
-        else callback(null, user)
+        else callback(null, user) // TODO Send the verification email
     })
 }
 
@@ -187,4 +189,13 @@ module.exports.verifyUser = function (code, callback) {
         if (error) callback(error)
         else callback(null, result)
     })
+}
+
+/**
+ * @function sendVerificationCode
+ * Sends a code to a unverified user's email, proving they own the email address.
+ * @param {String} code - the 
+ */
+module.exports.sendVerificationCode = function (code, callback) {
+
 }
