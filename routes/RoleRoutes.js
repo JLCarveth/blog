@@ -5,7 +5,8 @@
  * Current Routes:
  * - /api/createRole [POST]
  * - /api/assignPermission [POST]
- * - /api/revokePermission
+ * - /api/revokePermission [POST]
+ * - /api/removeRole [POST]
  */
 
 const RoleController   = require('../controller').RoleController
@@ -79,6 +80,29 @@ module.exports = function (app) {
         RoleController.revokePermission(role, permissions, (error) => {
             if (error) res.send({success:false, message: error})
             else res.send({success:true, message:'Role updated.'})
+        })
+    })
+
+    /**
+     * POST request on /api/removeRole
+     * Params:
+     *  - role {String} - the name of the role to be removed.
+     */
+    app.post('/api/removeRole', (req,res) => {
+        console.log('POST request on /api/removeRole')
+        const role = req.body.role
+        RoleController.removeRole(role, (error, result) => {
+            if (error) res.status(500).send({
+                success:false,
+                message:error
+            }) 
+            else {
+                const msg = result ? 'Role removed successfully.' : 'Role was not found.' 
+                res.send({
+                    success:true,
+                    message:msg
+                })
+            }
         })
     })
 

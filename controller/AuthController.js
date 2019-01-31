@@ -177,6 +177,19 @@ module.exports.deleteUser = function (email, callback) {
 }
 
 /**
+ * @function getUsersByRole
+ * Returns an array of all users with the given role.
+ * @param {String} role - the role for which to query
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.getUsersByRole = function (role, callback) {
+    UserModel.find({'role':role}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+/**
  * @function verifyUser
  * Verifies a user account, so they can perform actions
  * @param {String} code - the unique code used for verification
