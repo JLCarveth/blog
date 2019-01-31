@@ -29,14 +29,14 @@ module.exports = function (app) {
             res.status(422).send('Email or Password not provided')
         } else {
             AuthController.authenticateUser(req.ip, email, password, (error, result) => {
-                if (error) res.send({success:false, message:error})
-                else {
+                if (error) {
+                   res.send({success:false, message:error})
+                } else {
                     const expiry = new Date().getTime()
                     res.cookie('token', result, {
                         secure: true,
                         httpOnly:true,
-                        expiry: new Date(expiry + 360000).getTime()})
-                    res.send(result)
+                        expiry: new Date(expiry + 360000).getTime()}).send(result)
                 }
              })
         }
@@ -54,7 +54,7 @@ module.exports = function (app) {
         const password = req.body.password
 
         if (!email || !username || !password) {
-            res.end('Email, username, and/or password not provided.')
+            res.send('Email, username, and/or password not provided.')
         } else {
             AuthController.registerUser(email, username, password, (error, result) => {
                 if (error) res.send(error)

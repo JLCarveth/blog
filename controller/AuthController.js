@@ -33,10 +33,10 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
     if (failures.get(ip) != null) {
         var fail = failures.get(ip)
         var now = new Date()
-        console.log('Fail: ' + JSON.stringify(fail))
         // If the IP has already failed 5 times this hour...
         if (fail.attempts > 4) {
             callback('Too many failed attempts. Try again later.')
+            return;
         } else if ((now - fail.lastFailure) > 3600000) { // Last failed attempt was over an hour ago
             failures.delete(ip)
         }
@@ -47,16 +47,14 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
         else {
             valid = crypto.validateInput(password, result.password, result.salt)
             if (!valid) {
-                console.log('Invalid')
                 // If the authentication failed (incorrect credentials)
                 if (failures.get(ip) == null) { // Assuming first failure
                     failures.set(ip, {attempts:1, lastFailure:new Date()})
-                } else { // If they've failed recently.
-                    params = failures.get(ip)
-                    params.attempts++
-                    params.lastFailure = new Date()
-                    failures.set(ip, params)
                 }
+                params = failures.get(ip)
+                params.attempts++
+                params.lastFailure = new Date()
+                failures.set(ip, params)
                 callback('Authentication failed.')
             } else {
                 auth.generateToken(result.email, result.role, (error,result) => {
