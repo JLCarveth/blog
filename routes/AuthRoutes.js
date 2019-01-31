@@ -10,10 +10,17 @@
  */
 const AuthController    = require('../controller').AuthController
 const RoleWare          = require('../middlewares').RoleWare
+const ParameterValidation = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
     // Assign permissions to appropriate routes
     app.use('/api/deleteUser', new RoleWare('deleteUser'))
+
+    // Assign Parameter requirements for each role
+    app.use('/api/deleteUser', new ParameterValidation('email'))
+    app.use('/login', new ParameterValidation('email', 'password'))
+    app.use('/register', new ParameterValidation('email', 'username', 'password'))
+    app.use('/changePassword', new ParameterValidation('email', 'password', 'newpass'))
 
     /**
      * POST request on /login
@@ -76,7 +83,7 @@ module.exports = function (app) {
         console.log('POST request on /changePassword')
         const email = req.body.email
         const oldPass = req.body.password
-        const newPass = req.body.newPass
+        const newPass = req.body.newpass
 
         if (!email || !oldPass || !newPass) {
             res.send('Email, password, or new password not provided.')
