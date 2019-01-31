@@ -5,15 +5,21 @@
  * Handles all of the routing for operations on blog post data
  */
 
-const BlogController    = require('../controller').BlogController
-const AuthController    = require('../controller').AuthController
-const RoleWare          = require('../middlewares').RoleWare
+const BlogController        = require('../controller').BlogController
+const AuthController        = require('../controller').AuthController
+const RoleWare              = require('../middlewares').RoleWare
+const ParameterValidation   = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
 
     // Assign perm requirements to each applicable route
     app.use('/api/post', new RoleWare('createPost'))
     app.use('/api/post/approve', new RoleWare('approvePost'))
+
+    // Assign required parameters to each route
+    app.use('/api/post', new ParameterValidation('title','content'))
+    app.use('/api/post/approve', new ParameterValidation('blogID'))
+    app.use('/api/blog/comment', new ParameterValidation('author', 'blogpost', 'content'))
 
     /**
      * POST request to /api/post

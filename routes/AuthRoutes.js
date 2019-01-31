@@ -10,10 +10,17 @@
  */
 const AuthController    = require('../controller').AuthController
 const RoleWare          = require('../middlewares').RoleWare
+const ParameterValidation = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
     // Assign permissions to appropriate routes
     app.use('/api/deleteUser', new RoleWare('deleteUser'))
+
+    // Assign Parameter requirements for each role
+    app.use('/api/deleteUser', new ParameterValidation('email'))
+    app.use('/login', new ParameterValidation('email', 'password'))
+    app.use('/register', new ParameterValidation('email', 'username', 'password'))
+    app.use('/changePassword', new ParameterValidation('email', 'password', 'newpass'))
 
     /**
      * POST request on /login
@@ -29,14 +36,14 @@ module.exports = function (app) {
             res.status(422).send('Email or Password not provided')
         } else {
             AuthController.authenticateUser(req.ip, email, password, (error, result) => {
-                if (error) res.send({success:false, message:error})
-                else {
+                if (error) {
+                   res.send({success:false, message:error})
+                } else {
                     const expiry = new Date().getTime()
                     res.cookie('token', result, {
                         secure: true,
                         httpOnly:true,
-                        expiry: new Date(expiry + 360000).getTime()})
-                    res.send(result)
+                        expiry: new Date(expiry + 360000).getTime()}).send(result)
                 }
              })
         }
@@ -54,7 +61,7 @@ module.exports = function (app) {
         const password = req.body.password
 
         if (!email || !username || !password) {
-            res.end('Email, username, and/or password not provided.')
+            res.send('Email, username, and/or password not provided.')
         } else {
             AuthController.registerUser(email, username, password, (error, result) => {
                 if (error) res.send(error)
@@ -76,7 +83,7 @@ module.exports = function (app) {
         console.log('POST request on /changePassword')
         const email = req.body.email
         const oldPass = req.body.password
-        const newPass = req.body.newPass
+        const newPass = req.body.newpass
 
         if (!email || !oldPass || !newPass) {
             res.send('Email, password, or new password not provided.')

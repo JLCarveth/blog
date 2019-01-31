@@ -9,6 +9,11 @@
 const RoleModel = require('../models').Role
 
 /**
+ * Dependencies
+ */
+const AuthController = require('./AuthController')
+
+/**
  * @function getPermissions
  * @param {String} roleName - the name of the role
  * @param {requestCallback} callback - handles the response.
@@ -121,6 +126,29 @@ module.exports.revokePermission = function (role, permission, callback) {
             })
         }
     }
+}
+
+/**
+ * @function removeRole
+ * Removes the given role from the DB, given no user is assigned role
+ * @param {String} role the name of the role to remove
+ * @param {requestCallback} callback - handles the function response.
+ */
+module.exports.removeRole = function (role, callback) {
+    AuthController.getUsersByRole(role, (error, result) => {
+        if (error) callback(error)
+        else if (result.length > 1) {
+            callback('Cannot remove role while there are users assigned to it.')
+        } else {
+            // Assuming no user has the role to be deleted
+            RoleModel.findOneAndDelete({'role':role}, (error, result) => {
+                if (error) callback(error)
+                else if (result == null){
+                    callback(null, false)
+                } else callback(null, true)// The role was deleted
+            })
+        }
+    })
 }
 
 /**

@@ -12,11 +12,16 @@ const IPController = require('../controller').IPController
  * Handles RBAC
  */
 const RoleWare = require('../middlewares').RoleWare
+const ParameterValidation = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
     // Assign permissions to appropriate routes
     app.use('/api/banip', new RoleWare('banip'))
     app.use('/api/unbanip', new RoleWare('unbanip'))
+
+    const pv = new ParameterValidation('address')// Saves making two identical objs
+    app.use('/api/banip', pv)
+    app.use('/api/unbanip', pv)
 
     /**
      * POST request on /api/banip
