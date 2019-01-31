@@ -11,12 +11,19 @@
 
 const RoleController   = require('../controller').RoleController
 const RoleWare         = require('../middlewares').RoleWare
+const ParameterValidation = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
     // Require permissions for necessary routes
     app.use('/api/createRole', new RoleWare('modifyRole'))
     app.use('/api/assignPermission', new RoleWare('modifyRole'))
     app.use('/api/revokePermission', new RoleWare('modifyRole'))
+    app.use('/api/removeRole', new ParameterValidation('modifyRole'))
+    // Require parameters
+    app.use('/api/createRole', new ParameterValidation('role','permissions'))
+    app.use('/api/assignPermission', new ParameterValidation('role','permissions'))
+    app.use('/api/revokePermission', new ParameterValidation('role', 'permissions'))
+    app.use('/api/removeRole', new ParameterValidation('role'))
 
     /**
      * POST request on /api/createRole
