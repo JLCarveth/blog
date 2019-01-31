@@ -16,7 +16,7 @@ const RoleController = require('../controller').RoleController
  * @param {String} perm - the name of the permission required by a route.
  */
 const RoleWare = function (perm) {
-    this.cache = {}
+    this.cache = []
     this.refreshCache()
     var that = this
     return function (req, res, next) {
@@ -39,7 +39,7 @@ const RoleWare = function (perm) {
 }
 
 RoleWare.prototype.refreshCache = function () {
-    this.cache = {}
+    this.cache = []
     RoleController.generateCache((error, result) => {
         if (error) console.error(error)
         else this.cache = result

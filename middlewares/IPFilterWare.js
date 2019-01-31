@@ -11,7 +11,7 @@ const IPController = require('../controller').IPController
  * @param {Function} next - the Express.js middleware-chaining function
  */
 const IPFilterWare = function () {
-    this.cache = {}
+    this.cache = []
     this.refreshCache()
     var that = this // Scope needed for the middleware decl
 
@@ -35,7 +35,7 @@ const IPFilterWare = function () {
 }
 
 IPFilterWare.prototype.refreshCache = function () {
-    this.cache = {}
+    this.cache = []
     IPController.generateCache((error, cache) => {
         if (error) console.error(error)
         else this.cache = cache

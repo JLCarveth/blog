@@ -16,6 +16,7 @@ const RoleSchema = new Schema({
     role: {
         type: String,
         default: "user",
+        unique: true
     },
     permissions: {
         type: [String]

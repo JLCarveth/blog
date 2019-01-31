@@ -33,8 +33,8 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
     if (failures.get(ip) != null) {
         var fail = failures.get(ip)
         var now = new Date()
-        // If the IP has already failed 5 times this hour...
-        if (fail.attempts > 4) {
+        // If the IP has already failed 3 times this hour...
+        if (fail.attempts >= 3) {
             callback('Too many failed attempts. Try again later.')
             return;
         } else if ((now - fail.lastFailure) > 3600000) { // Last failed attempt was over an hour ago
@@ -49,7 +49,7 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
             if (!valid) {
                 // If the authentication failed (incorrect credentials)
                 if (failures.get(ip) == null) { // Assuming first failure
-                    failures.set(ip, {attempts:1, lastFailure:new Date()})
+                    failures.set(ip, {attempts:0, lastFailure:new Date()})
                 }
                 params = failures.get(ip)
                 params.attempts++

@@ -26,7 +26,7 @@ module.exports = function (app) {
     app.post('/api/createRole', (req,res) => {
         console.log('POST request on /api/createRole')
         const role = req.body.role
-        const permissions = req.body.permissions
+        var permissions = req.body.permissions
         permissions = permissions.split(',')
 
         if (permissions.length === 1) permissions = permissions.toString()
