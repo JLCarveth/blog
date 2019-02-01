@@ -10,6 +10,11 @@
   */
  const BlogModel = require('../models').Blog
 
+ /**
+  * Dependencies
+  */
+const AuthController = require('./AuthController')
+
 /**
  * @function createBlogPost
  * Creates a new, unapproved blog post
@@ -64,7 +69,7 @@ module.exports.approvePost = function (blogID, callback) {
  * @param {requestCallback} callback - handles the function response.
  */
 module.exports.getPost = function (blogID, callback) {
-    BlogModel.findOne({_id:blogID}, (error, result) => {
+    BlogModel.findOne({_id:blogID, approved:true}, (error, result) => {
         if (error) callback(error)
         else callback(null,result)
     })
@@ -110,15 +115,32 @@ module.exports.fetchRecent = function (callback) {
 }
 
 /**
- * @function getPostsByAuthor
+ * @function getPostsByAuthorID
  * Get all blog posts made by a certain author.
  * @param {ObjectID} authorID - The ID of the author
  * @param {requestCallback} callback - handles the function response.
  */
-module.exports.getPostsByAuthor = function (authorID, callback) {
-    BlogModel.find({author:authorID}, (error, result) => {
+module.exports.getPostsByAuthorID = function (authorID, callback) {
+    BlogModel.find({author:authorID, approved:true}, (error, result) => {
         if (error) callback(error)
         else callback(null, result)
+    })
+}
+
+/**
+ * @function getPostsByUsername
+ * @param {String} username - the username of the author
+ * @param {requestCallback} callback - handles the function response.
+ */
+module.exports.getPostsByUsername = function (username, callback) {
+    AuthController.getUserByUsername(username, (error, result) => {
+        if (error) callback(error)
+        else {
+            BlogModel.find({'author':result._id, approved:true}, (error, result) => {
+                if (error) callback(error)
+                else callback(null, result)
+            })
+        }
     })
 }
 
