@@ -3,6 +3,7 @@
  * @author John L. Carveth
  * @requires express
  * Handles all of the routing for operations on blog post data
+ * 
  */
 
 const BlogController        = require('../controller').BlogController
@@ -41,18 +42,12 @@ module.exports = function (app) {
         const content = req.body.content
         const tags = req.body.tags
 
-        // Check for any missing non-optional fields
-        if (!title || !content) {
-            res.status(422).send({success:false, message: "Title/Author/Content missing from request"})
-            return
-        }
-
         var author = ''
         // Get the ObjectID associated with the email address from the token
-        AuthController.getUserEmail(authorEmail, (error, result) => {
-            if (error) {res.send({success:false, message:error})}
+        AuthController.getUserByEmail(authorEmail, (error, result) => {
+            if (error) res.send({success:false, message:error})
             else {
-                author = result
+                author = result._id
                 // Now that we have the author's ID, we create the blog post.
                 BlogController.createBlogPost(title,subtitle,author,content,tags, 
                     (error, result) => {
@@ -101,28 +96,30 @@ module.exports = function (app) {
     })
 
     /**
-     * GET request to /blog/a/authorID
+     * GET request to /blog/a/
      * Gets all of the blog posts authored by the given user.
+     * Params:
+     *  - author {String} the author username whose posts will be fetched.
      */
     app.get('/blog/a/:author', (req,res) => {
-        const authorID = req.params.author
+        const author = req.params.author
 
-        if (!authorID) {
+        if (!author) {
             res.send({success: false, message: 'Author ID must be provided.'})
         } else {
-            BlogController.getPostsByAuthor(author, (error, result) => {
-                if (error) res.send({success:true, message:result})
+            BlogController.getPostsByUsername(author, (error, result) => {
+                if (error) res.send({success:false, message:error})
+                else res.send({success:true, message:result})
             })
         }
     })
-
 
     /**
      * GET request to /blog/b/:id
      * Gets a specific blog post by its ID.
      * 
      * Params:
-     *      - author
+     *   - author
      */
     app.get('/blog/b/:id', (req,res) => {
         const id = req.params.id
@@ -142,20 +139,33 @@ module.exports = function (app) {
      * Posts a comment to the blog post with matching ID.
      * 
      * Params:
-     *      - author, blogpost, content
+     *   - author, blogpost, content
      */
     app.post('/api/blog/comment', (req,res) => {
         const authorID = req.body.author
         const blogID = req.body.blogpost
         const content = req.body.content
 
-        if (!authorID || !blogID || !content) {
-            res.status(400).send({success:false,message:'Missing parameters'})
-        } else {
-            BlogController.postComment(authorID,blogID,content, (error, result) => {
-                if (error) res.send({success:false,message:error})
-                else res.send({success:true, message:'Comment has been posted.'})
-            })
-        }
+        BlogController.postComment(authorID,blogID,content, (error, result) => {
+            if (error) res.send({success:false,message:error})
+            else res.send({success:true, message:'Comment has been posted.'})
+        })
+
+    })
+
+    /**
+     * GET request to /blog/:tag
+     * Get all blog posts with a certain tag
+     * 
+     * Params:
+     *  - tag
+     */
+    app.get('/blog/t/:tag', (req,res) => {
+        const tag = req.params.tag
+
+        BlogController.getPostsByTag(tag, (error, result) => {
+            if (error) res.status(500).send({success:false, message:error})
+            else res.send({success:true, message:result})
+        })
     })
 }

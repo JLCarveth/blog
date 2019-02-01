@@ -5,6 +5,7 @@
  * - Authentication
  * - Registration
  * - Changing user password
+ * 
 */
 
 const crypto = require('../util').crypto
@@ -16,9 +17,9 @@ const UserModel = require('../models').User
  */
 
 /**
- * @var failures tracks failed login attempts
+ * @const failures tracks failed login attempts
  */
-var failures = new Map()
+const failures = new Map()
 
 /**
  * @function authenticateUser
@@ -143,20 +144,33 @@ module.exports.checkEmail = function (email, callback) {
 }
 
 /**
- * @function getUserEmail
+ * @function getUserByEmail
  * Gets the ObjectID associated with the given email address, if it exists within
  * the collection.
  * @param {string} email - The email address of the user
  * @param {requestCallback} callback - Handles the function response. 
  */
-module.exports.getUserEmail = function (email, callback) {
+module.exports.getUserByEmail = function (email, callback) {
     UserModel.findOne({email:email}, (error, result) => {
         if (error) callback(error)
         else {
             const id = result._id
-            console.log("[getUserEmail] " + id)
-            callback(null, id)
+            console.log("[getUserByEmail] " + id)
+            callback(null, result)
         }
+    })
+}
+
+/**
+ * @function getUserByUsername
+ * Gets the user object with matching username, if it exists
+ * @param {String} username - the username to search for
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.getUserByUsername = function (username, callback) {
+    UserModel.findOne({'username':username}, (error,result) => {
+        if (error) callback(error)
+        else callback(null, result)
     })
 }
 
