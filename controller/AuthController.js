@@ -6,8 +6,6 @@
  * - Registration
  * - Changing user password
  * 
- * TODO:
- *  - Update getUserByEmail to return full user object, instead of just _id
 */
 
 const crypto = require('../util').crypto
@@ -158,7 +156,7 @@ module.exports.getUserByEmail = function (email, callback) {
         else {
             const id = result._id
             console.log("[getUserByEmail] " + id)
-            callback(null, id)
+            callback(null, result)
         }
     })
 }

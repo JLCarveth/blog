@@ -53,7 +53,7 @@ module.exports = function (app) {
         AuthController.getUserByEmail(authorEmail, (error, result) => {
             if (error) res.send({success:false, message:error})
             else {
-                author = result
+                author = result._id
                 // Now that we have the author's ID, we create the blog post.
                 BlogController.createBlogPost(title,subtitle,author,content,tags, 
                     (error, result) => {
