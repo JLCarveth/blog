@@ -42,12 +42,6 @@ module.exports = function (app) {
         const content = req.body.content
         const tags = req.body.tags
 
-        // Check for any missing non-optional fields
-        if (!title || !content) {
-            res.status(422).send({success:false, message: "Title/Author/Content missing from request"})
-            return
-        }
-
         var author = ''
         // Get the ObjectID associated with the email address from the token
         AuthController.getUserByEmail(authorEmail, (error, result) => {
@@ -125,7 +119,7 @@ module.exports = function (app) {
      * Gets a specific blog post by its ID.
      * 
      * Params:
-     *      - author
+     *   - author
      */
     app.get('/blog/b/:id', (req,res) => {
         const id = req.params.id
@@ -145,20 +139,33 @@ module.exports = function (app) {
      * Posts a comment to the blog post with matching ID.
      * 
      * Params:
-     *      - author, blogpost, content
+     *   - author, blogpost, content
      */
     app.post('/api/blog/comment', (req,res) => {
         const authorID = req.body.author
         const blogID = req.body.blogpost
         const content = req.body.content
 
-        if (!authorID || !blogID || !content) {
-            res.status(400).send({success:false,message:'Missing parameters'})
-        } else {
-            BlogController.postComment(authorID,blogID,content, (error, result) => {
-                if (error) res.send({success:false,message:error})
-                else res.send({success:true, message:'Comment has been posted.'})
-            })
-        }
+        BlogController.postComment(authorID,blogID,content, (error, result) => {
+            if (error) res.send({success:false,message:error})
+            else res.send({success:true, message:'Comment has been posted.'})
+        })
+
+    })
+
+    /**
+     * GET request to /blog/:tag
+     * Get all blog posts with a certain tag
+     * 
+     * Params:
+     *  - tag
+     */
+    app.get('/blog/t/:tag', (req,res) => {
+        const tag = req.params.tag
+
+        BlogController.getPostsByTag(tag, (error, result) => {
+            if (error) res.status(500).send({success:false, message:error})
+            else res.send({success:true, message:result})
+        })
     })
 }

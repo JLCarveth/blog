@@ -158,6 +158,18 @@ module.exports.getPost = function (blogID, callback) {
 }
 
 /**
+ * @function getPostsByTag
+ * @param {String} tag
+ * @param {requestCallback} callback
+ */
+module.exports.getPostsByTag = function (tag, callback) {
+    BlogModel.find({tags:tag}, (error, result) => {
+        if (error) callback(error)
+        else callback(null,result)
+    })
+}
+
+/**
  * @function postComment
  * Pushes a new comment to the array within the blog post.
  */
