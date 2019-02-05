@@ -7,7 +7,6 @@
  // Dependencies
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const crypto = require('../util/crypto')
 
 /**
  * @private
