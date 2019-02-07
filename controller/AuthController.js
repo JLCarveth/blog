@@ -42,9 +42,11 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
             failures.delete(ip)
         }
     }
-
+    
     UserModel.findOne({'email':email}, (error, result) => {
-        if (error) callback(error)
+        if (error) {
+            callback(error)
+        }
         else {
             valid = crypto.validateInput(password, result.password, result.salt)
             if (!valid) {

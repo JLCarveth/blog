@@ -21,10 +21,11 @@ const config = require('./config')
 const AuthWare = require('./middlewares').AuthWare
 const IPFilterWare = require('./middlewares').IPFilterWare
 
-// All requests must be filtered to check for banned IPs
-app.use('*', new IPFilterWare())
 // Allow cross-domain requests
 app.use(cors())
+app.options('*', cors())
+// All requests must be filtered to check for banned IPs
+app.use('*', new IPFilterWare())
 // All requests to the API must be authenticated with a token.
 app.use('/api/', AuthWare)
 // To be able to read JSON data

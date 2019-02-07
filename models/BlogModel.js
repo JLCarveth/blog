@@ -13,6 +13,7 @@ const Schema = mongoose.Schema
 const BlogSchema = new Schema({
     title: { type: String, required: true, trim: true },
     subtitle: { type: String, required: false, trim: true },
+    image: {type: String, required: false},
     // Author refers to the ObjectID of a document in the users collection (a registered user)
     author: { 
         type: Schema.Types.ObjectId,

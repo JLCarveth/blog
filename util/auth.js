@@ -19,19 +19,18 @@ const generateToken = function (email, role, callback) {
     const expiry = generateExpiry()
     const payload = {
         "email" : email,
-        "exp": expiry,
         "role": role
     }
-    console.log('EXP' + expiry)
     jwt.sign(payload, process.env.secretKey, {
-        algorithm : "HS512"
-    }, (error, token) => {
-        if (error) {
+        expiresIn: '1h'
+    }, (err, token) => {
+        if (err) {
             callback({
-                error:error,
+                error:err,
                 message:"WTF"
             })
         } else { 
+            console.log('Hello')
             callback(null, token)
         }
     })
@@ -44,8 +43,9 @@ const generateToken = function (email, role, callback) {
  * @return {Date} the expiry date
  */
 const generateExpiry = function () {
-    const issuedAt = new Date()
-    return Date.parse(new Date(Date.parse(issuedAt) + 3600000))
+    var now = new Date()
+    var time = now.getTime() + 3600000
+    return new Date(time).getTime() / 1000
 } 
 
 /**
@@ -76,6 +76,7 @@ const verifyJWT = function(token, callback) {
  */
 const isExpired = function (expiry) {
     const now = new Date()
+    console.log('Expired: ' + !(expiry - Date.parse(now)) > 0)
     return !(expiry - Date.parse(now)) > 0
 }
 

@@ -60,7 +60,6 @@ module.exports.generateSalt = function () {
  * @param {String} salt - the salt that was used to create the hash
  */
 module.exports.validateInput = function(password, hash, salt) {
-    console.log(`Crypto:validateInput(${password}, ${hash}, ${salt})`)
     return module.exports.hashPasswordWithSalt(password, salt).hash
      == hash;
 }

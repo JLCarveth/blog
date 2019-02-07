@@ -32,21 +32,22 @@ module.exports = function (app) {
         const email = req.body.email
         const password = req.body.password
 
-        if (!email || !password) {
-            res.status(422).send('Email or Password not provided')
-        } else {
-            AuthController.authenticateUser(req.ip, email, password, (error, result) => {
-                if (error) {
-                   res.send({success:false, message:error})
-                } else {
-                    const expiry = new Date().getTime()
-                    res.cookie('token', result, {
-                        secure: true,
-                        httpOnly:true,
-                        expiry: new Date(expiry + 360000).getTime()}).send(result)
-                }
-             })
-        }
+        AuthController.authenticateUser(req.ip, email, password, (error, result) => {
+            if (error) {
+                res.send({success:false, message:error})
+            } else {
+                var now = new Date().getTime()
+                var expiry = new Date(now + 3600000)
+                res.cookie('token', result, {
+                    expires: expiry,
+                    httpOnly: true
+                })
+                res.send({
+                    success:true,
+                    message:result
+                })
+            }
+        })
     })
 
     /**
@@ -60,16 +61,12 @@ module.exports = function (app) {
         const username = req.body.username
         const password = req.body.password
 
-        if (!email || !username || !password) {
-            res.send('Email, username, and/or password not provided.')
-        } else {
-            AuthController.registerUser(email, username, password, (error, result) => {
-                if (error) res.send(error)
-                else {
-                    res.send(result)
-                }
-            })
-        }
+        AuthController.registerUser(email, username, password, (error, result) => {
+            if (error) res.send(error)
+            else {
+                res.send(result)
+            }
+        })
     })
 
     /**
@@ -85,19 +82,16 @@ module.exports = function (app) {
         const oldPass = req.body.password
         const newPass = req.body.newpass
 
-        if (!email || !oldPass || !newPass) {
-            res.send('Email, password, or new password not provided.')
-        } else {
-            AuthController.authenticateUser(req.ip, email, oldPass, (error, result) => {
-                if (error) res.send(error)
-                else {
-                    AuthController.changePassword(email, newPass, (error, result) => {
-                        if (error) res.send(error)
-                        else res.send(result)
-                    })
-                }
-            }) 
-        }
+        AuthController.authenticateUser(req.ip, email, oldPass, (error, result) => {
+            if (error) res.send(error)
+            else {
+                AuthController.changePassword(email, newPass, (error, result) => {
+                    if (error) res.send(error)
+                    else res.send(result)
+                })
+            }
+        }) 
+
     })
 
     /**
