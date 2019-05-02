@@ -7,6 +7,7 @@ const app = express();
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 const seed = require('./util').seed
 const seedData = require('./data.js')
@@ -20,6 +21,9 @@ const config = require('./config')
 const AuthWare = require('./middlewares').AuthWare
 const IPFilterWare = require('./middlewares').IPFilterWare
 
+// Allow cross-domain requests
+app.use(cors())
+app.options('*', cors())
 // All requests must be filtered to check for banned IPs
 app.use('*', new IPFilterWare())
 // All requests to the API must be authenticated with a token.

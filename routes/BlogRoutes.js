@@ -29,14 +29,14 @@ module.exports = function (app) {
      * 
      * Params:
      *  - title: {String} The title of the blog post. Not optional
-     *  - subtitle {String} The optional subtitle of the post. 
+     *  - tagline {String} The optional tagline of the post. 
      *  - content {String} The markdown-formatted content of the post.
      *  - tags {String} The tags to be attached to the post for searching. Strings separated by commas
      */
     app.post('/api/post', (req,res) => {
         // This route requires the user has the 'createPost' perm
         const title = req.body.title
-        const subtitle = req.body.subtitle
+        const tagline = req.body.tagline
         // tokenEmail is set by AuthWare
         const authorEmail = req.tokenEmail
         const content = req.body.content
@@ -47,9 +47,9 @@ module.exports = function (app) {
         AuthController.getUserByEmail(authorEmail, (error, result) => {
             if (error) res.send({success:false, message:error})
             else {
-                author = result._id
+                author = result.username
                 // Now that we have the author's ID, we create the blog post.
-                BlogController.createBlogPost(title,subtitle,author,content,tags, 
+                BlogController.createBlogPost(title,tagline,author,content,tags, 
                     (error, result) => {
                     if (error) {
                         res.send({success: false, message: error})
@@ -62,14 +62,14 @@ module.exports = function (app) {
     })
 
     /**
-     * POST request to /api/post/approve
+     * POST request to /api/approvePost
      * User requesting this action must have admin privilleges. Approves a blog post,
      * making it visible to end users.
      * 
      * Params:
      *  - blogID: {String} The ID of the blog post to be approved
      * */
-    app.post('/api/post/approve', (req,res) => {
+    app.post('/api/approvePost', (req,res) => {
         const blogID = req.body.blogID
         
         BlogController.approvePost(blogID, (error, result) => {
@@ -105,7 +105,7 @@ module.exports = function (app) {
         const author = req.params.author
 
         if (!author) {
-            res.send({success: false, message: 'Author ID must be provided.'})
+            res.send({success: false, message: 'Author username must be provided.'})
         } else {
             BlogController.getPostsByUsername(author, (error, result) => {
                 if (error) res.send({success:false, message:error})
@@ -142,11 +142,11 @@ module.exports = function (app) {
      *   - author, blogpost, content
      */
     app.post('/api/blog/comment', (req,res) => {
-        const authorID = req.body.author
+        const author = req.body.author
         const blogID = req.body.blogpost
         const content = req.body.content
 
-        BlogController.postComment(authorID,blogID,content, (error, result) => {
+        BlogController.postComment(author,blogID,content, (error, result) => {
             if (error) res.send({success:false,message:error})
             else res.send({success:true, message:'Comment has been posted.'})
         })

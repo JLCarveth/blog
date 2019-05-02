@@ -16,7 +16,7 @@ const IPFilterWare = function () {
     var that = this // Scope needed for the middleware decl
 
     return function (req, res, next) {
-        const ip = req.ip
+        var ip = req.ip
         // Ensure to trim any silly bits
         if (ip.substr(0,7) == '::ffff:') {
             ip = ip.substr(7)

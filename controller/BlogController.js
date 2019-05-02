@@ -20,7 +20,7 @@ const AuthController = require('./AuthController')
  * Creates a new, unapproved blog post
  * @param {String} title - the title of the new blog post
  * @param {String} subtitle - the optional subtitle
- * @param {ObjectID} author - the author submitting the blog post
+ * @param {String} author - the username of the author submitting the blog post
  * @param {String} content - The content of the blog post, in Markdown format.
  * @param {String} tags - Tags attached to the post for searching, tags separated by commas.
  * @param {requestCallback} callback - Handles the function response
@@ -133,14 +133,9 @@ module.exports.getPostsByAuthorID = function (authorID, callback) {
  * @param {requestCallback} callback - handles the function response.
  */
 module.exports.getPostsByUsername = function (username, callback) {
-    AuthController.getUserByUsername(username, (error, result) => {
+    BlogModel.find({'author':username, approved:true}, (error, result) => {
         if (error) callback(error)
-        else {
-            BlogModel.find({'author':result._id, approved:true}, (error, result) => {
-                if (error) callback(error)
-                else callback(null, result)
-            })
-        }
+        else callback(null, result)
     })
 }
 
@@ -173,8 +168,8 @@ module.exports.getPostsByTag = function (tag, callback) {
  * @function postComment
  * Pushes a new comment to the array within the blog post.
  */
-module.exports.postComment = function (authorID, blogID, content, callback) {
-    const comment = {'author':authorID, 'content':content}
+module.exports.postComment = function (author, blogID, content, callback) {
+    const comment = {'author':author, 'content':content}
     BlogModel.findOneAndUpdate({'_id':blogID}, {$push: {comments:comment}},
      (error, result) => {
          if (error) callback(error)
@@ -189,8 +184,8 @@ module.exports.postComment = function (authorID, blogID, content, callback) {
  * @param {mongoose.SchemaTypes.ObjectID} authorID - author of the comment to delete
  * @param {mongoose.SchemaTypes.ObjectID} blogID - the ID of the post where the comment was made
  */
-module.exports.removeAllComments = function (authorID, blogID, callback) {
-    BlogModel.findOneAndUpdate({'_id':blogID}, {$pull: {comments:authorID}},
+module.exports.removeAllComments = function (author, blogID, callback) {
+    BlogModel.findOneAndUpdate({'_id':blogID}, {$pull: {comments:author}},
     (error, callback) => {
         if (error) callback(error)
         else callback(null,result)
@@ -206,7 +201,7 @@ module.exports.removeAllComments = function (authorID, blogID, callback) {
  */
 module.exports.removeComment = function (commentID, blogID, callback) {
     BlogModel.findOneAndUpdate({'_id':blogID}, {$pull: {comments:commentID}},
-    (error, callback) => {
+    (error, result) => {
         if (error) callback(error)
         else callback(null,result)
     })

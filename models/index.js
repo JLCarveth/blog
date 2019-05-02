@@ -3,8 +3,6 @@
  * TODO: When new Schemas are needed, 
  */
 
-const mongoose = require('mongoose')
-
 /**
  * BlogSchema defines how a blog post is stored in MongoDB
  */

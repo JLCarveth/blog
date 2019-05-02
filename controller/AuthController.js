@@ -5,7 +5,6 @@
  * - Authentication
  * - Registration
  * - Changing user password
- * 
 */
 
 const crypto = require('../util').crypto
@@ -42,9 +41,11 @@ module.exports.authenticateUser = function (ip, email, password, callback) {
             failures.delete(ip)
         }
     }
-
+    
     UserModel.findOne({'email':email}, (error, result) => {
-        if (error) callback(error)
+        if (error) {
+            callback(error)
+        }
         else {
             valid = crypto.validateInput(password, result.password, result.salt)
             if (!valid) {
@@ -171,6 +172,13 @@ module.exports.getUserByUsername = function (username, callback) {
     UserModel.findOne({'username':username}, (error,result) => {
         if (error) callback(error)
         else callback(null, result)
+    })
+}
+
+module.exports.getUserByID = function (id, callback) {
+    UserModel.findOne({'_id':id}, (error, result) => {
+        if (error) callback(error)
+        else callback(null,result)
     })
 }
 
