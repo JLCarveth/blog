@@ -1,4 +1,10 @@
+/**
+ * @const mongoose - handles the data storage
+ */
 const mongoose = require('mongoose')
+/**
+ * @const Schema - the Mongoose schema object
+ */
 const Schema = mongoose.Schema
 
 /**
@@ -6,10 +12,11 @@ const Schema = mongoose.Schema
  */
 const BlogSchema = new Schema({
     title: { type: String, required: true, trim: true },
-    subtitle: { type: String, required: false, trim: true },
+    tagline: { type: String, required: false, trim: true },
+    image: {type: String, required: false},
     // Author refers to the ObjectID of a document in the users collection (a registered user)
     author: { 
-        type: Schema.Types.ObjectId,
+        type: String,
         required:true
     },
     // When the article was published
@@ -24,7 +31,7 @@ const BlogSchema = new Schema({
     },
     // The comments on the specific blog post. Comments can only be made by registered users
     comments: [{
-        author: { type: Schema.Types.ObjectId, required: true },
+        author: { type: String, required: true },
         date: { type: Date, default: Date.now },
         content: { type: String, required: true }
     }],
@@ -59,7 +66,6 @@ const BlogSchema = new Schema({
     // For statistical purposes
     views: { type: Number, default: 0 }
 })
-
 // DECLARE STATICS HERE
 
 module.exports = BlogSchema 

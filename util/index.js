@@ -1,9 +1,9 @@
 const crypto = require('./crypto')
 const auth = require('./auth')
-const validate = require('./validate')
+const seed = require('./seed')
 
 module.exports = {
     crypto,
     auth,
-    validate
+    seed
 }

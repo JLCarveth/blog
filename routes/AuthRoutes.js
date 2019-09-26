@@ -1,4 +1,6 @@
 /** 
+ * @module routes/AuthRoutes
+ * @requires express
  * The AuthController handles the authentication logic
  * Current URL Routes:
  * - /login [POST]
@@ -6,9 +8,20 @@
  * - /changePassword [POST]
  * - /deleteUser [POST]
  */
-const AuthController = require('../controller').AuthController
+const AuthController    = require('../controller').AuthController
+const RoleWare          = require('../middlewares').RoleWare
+const ParameterValidation = require('../middlewares').ParameterValidation
 
 module.exports = function (app) {
+    // Assign permissions to appropriate routes
+    app.use('/api/deleteUser', new RoleWare('deleteUser'))
+
+    // Assign Parameter requirements for each role
+    app.use('/api/deleteUser', new ParameterValidation('email'))
+    app.use('/login', new ParameterValidation('email', 'password'))
+    app.use('/register', new ParameterValidation('email', 'username', 'password'))
+    app.use('/changePassword', new ParameterValidation('email', 'password', 'newpass'))
+
     /**
      * POST request on /login
      * Params:
@@ -19,17 +32,22 @@ module.exports = function (app) {
         const email = req.body.email
         const password = req.body.password
 
-        if (!email || ! password) {
-            res.end('Email or Password not provided')
-        } else {
-            AuthController.authenticateUser(email, password, (error, result) => {
-                if (error) res.json(error)
-                else {
-                    console.log(`Result: ${result}`)
-                    res.json(result)
-                }
-             })
-        }
+        AuthController.authenticateUser(req.ip, email, password, (error, result) => {
+            if (error) {
+                res.send({success:false, message:error})
+            } else {
+                var now = new Date().getTime()
+                var expiry = new Date(now + 3600000)
+                res.cookie('token', result, {
+                    expires: expiry,
+                    httpOnly: true
+                })
+                res.send({
+                    success:true,
+                    message:result
+                })
+            }
+        })
     })
 
     /**
@@ -43,16 +61,12 @@ module.exports = function (app) {
         const username = req.body.username
         const password = req.body.password
 
-        if (!email || !username || !password) {
-            res.end('Email, username, and/or password not provided.')
-        } else {
-            AuthController.registerUser(email, username, password, (error, result) => {
-                if (error) res.send(error)
-                else {
-                    res.send(result)
-                }
-            })
-        }
+        AuthController.registerUser(email, username, password, (error, result) => {
+            if (error) res.send(error)
+            else {
+                res.send(result)
+            }
+        })
     })
 
     /**
@@ -66,21 +80,18 @@ module.exports = function (app) {
         console.log('POST request on /changePassword')
         const email = req.body.email
         const oldPass = req.body.password
-        const newPass = req.body.newPass
+        const newPass = req.body.newpass
 
-        if (!email || !oldPass || !newPass) {
-            res.send('Email, password, or new password not provided.')
-        } else {
-            AuthController.authenticateUser(email, oldPass, (error, result) => {
-                if (error) res.send(error)
-                else {
-                    AuthController.changePassword(email, newPass, (error, result) => {
-                        if (error) res.send(error)
-                        else res.send(result)
-                    })
-                }
-            }) 
-        }
+        AuthController.authenticateUser(req.ip, email, oldPass, (error, result) => {
+            if (error) res.send(error)
+            else {
+                AuthController.changePassword(email, newPass, (error, result) => {
+                    if (error) res.send(error)
+                    else res.send(result)
+                })
+            }
+        }) 
+
     })
 
     /**
@@ -92,24 +103,21 @@ module.exports = function (app) {
      *      x-access-token - The token acquired from authentication
      */
     app.post('/api/deleteUser', (req,res) => {
+        console.log('POST request on /deleteUser')
         const email = req.body.email
-        console.log('Body Email ' + email)
         
-        // If the email to delete is the email of the authenticated user,
-        // Or if the user authenticated is an admin, delete user
-        console.log(`Token: ${process.env.tokenEmail}, Admin: ${process.env.tokenIsAdmin}`)
-        if ((email == process.env.tokenEmail) ||
-            (process.env.tokenIsAdmin == true)) {
-                AuthController.deleteUser(email, (error, result) => {
-                    if (error) res.send(error)
-                    else res.send(result)
-                })
-        } else {
-            res.send({
-                success: false,
-                message: 'Error deleting user'
-            })
-        }
+        AuthController.deleteUser(email, (error, result) => {
+            if (error) res.send(error)
+            else res.send(result)
+        })
     })
 
+    /**
+     * 
+     */
+    app.get('/api/verify/:code', (req,res) => {
+        const code = req.params.code
+        console.log('GET request on /api/verify/' + code)
+        
+    })
 }

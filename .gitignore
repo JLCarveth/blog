@@ -11,6 +11,14 @@ config.js
 
 # VSCode LineCounter extension output folder
 out/
+.VSCode/
 
 # JSDoc outputs
 docs/
+jsdoc.conf.json
+
+# Permission document file
+perms.txt
+
+# Seed data
+data.js

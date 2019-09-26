@@ -1,5 +1,5 @@
 /**
- * @file
+ * @module AuthController
  * @author John L. Carveth
  * This file handles all login behaviours such as:
  * - Authentication
@@ -9,8 +9,6 @@
 
 const crypto = require('../util').crypto
 const auth = require('../util').auth
-
-const mongoose = require('mongoose')
 const UserModel = require('../models').User
 
 /**
@@ -18,23 +16,55 @@ const UserModel = require('../models').User
  */
 
 /**
- * @function
+ * @const failures tracks failed login attempts
+ */
+const failures = new Map()
+
+/**
+ * @function authenticateUser
  * Authenticates credentials provided by a client against the MongoDB / Mongoose Collections
  * If the user was authenticated successfully, a JWT is sent back as result in callback()
+ * Also tracks failed attempts
  * @param {string} email - The email of the user trying to authenticate
  * @param {sring} password - The password of the user trying to authenticate
  * @param {function} requestCallback - Handles the response
  */
-module.exports.authenticateUser = function (email, password, callback) {
-    UserModel.authenticate(email, password, (error, result) => {
-        if (error) { callback(error) }
-        else if (result == true) {
-            console.log('Result was true, were authenticated')
-            const token = auth.generateToken(email, false, (error, token) => {
-                if (error) callback(error)
-                else callback(null,token)
-            })
-        } else callback({error: "Invalid email address or password."})
+module.exports.authenticateUser = function (ip, email, password, callback) {
+    if (failures.get(ip) != null) {
+        var fail = failures.get(ip)
+        var now = new Date()
+        // If the IP has already failed 3 times this hour...
+        if (fail.attempts >= 3) {
+            callback('Too many failed attempts. Try again later.')
+            return;
+        } else if ((now - fail.lastFailure) > 3600000) { // Last failed attempt was over an hour ago
+            failures.delete(ip)
+        }
+    }
+    
+    UserModel.findOne({'email':email}, (error, result) => {
+        if (error) {
+            callback(error)
+        }
+        else {
+            valid = crypto.validateInput(password, result.password, result.salt)
+            if (!valid) {
+                // If the authentication failed (incorrect credentials)
+                if (failures.get(ip) == null) { // Assuming first failure
+                    failures.set(ip, {attempts:0, lastFailure:new Date()})
+                }
+                params = failures.get(ip)
+                params.attempts++
+                params.lastFailure = new Date()
+                failures.set(ip, params)
+                callback('Authentication failed.')
+            } else {
+                auth.generateToken(result.email, result.role, (error,result) => {
+                    if (error) callback(error)
+                    else callback(null, result)
+                })
+            }
+        }
     })
 }
 
@@ -58,7 +88,7 @@ module.exports.registerUser = function (email, username, password, callback) {
         if (error) {
             callback({error:'Error creating user.'})
         }
-        else callback(null, user)
+        else callback(null, user) // TODO Send the verification email
     })
 }
 
@@ -96,7 +126,7 @@ module.exports.changePassword = function (email, newPassword, callback) {
  * @param {string} email - the email address to verify
  * @param {requestCallback} callback - handles the function response, params error, boolean
  */
-module.exports.verifyEmail = function (email, callback) {
+module.exports.checkEmail = function (email, callback) {
     if (!email) {
         return callback({error: 'Email was not provided'})
     }
@@ -115,24 +145,45 @@ module.exports.verifyEmail = function (email, callback) {
 }
 
 /**
- * @function
+ * @function getUserByEmail
  * Gets the ObjectID associated with the given email address, if it exists within
  * the collection.
  * @param {string} email - The email address of the user
  * @param {requestCallback} callback - Handles the function response. 
  */
-module.exports.getAuthorID = function (email, callback) {
+module.exports.getUserByEmail = function (email, callback) {
     UserModel.findOne({email:email}, (error, result) => {
         if (error) callback(error)
         else {
             const id = result._id
-            console.log("[getAuthorID] " + id)
-            callback(null, id)
+            console.log("[getUserByEmail] " + id)
+            callback(null, result)
         }
     })
 }
+
 /**
- * @function
+ * @function getUserByUsername
+ * Gets the user object with matching username, if it exists
+ * @param {String} username - the username to search for
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.getUserByUsername = function (username, callback) {
+    UserModel.findOne({'username':username}, (error,result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+module.exports.getUserByID = function (id, callback) {
+    UserModel.findOne({'_id':id}, (error, result) => {
+        if (error) callback(error)
+        else callback(null,result)
+    })
+}
+
+/**
+ * @function deleteUser
  * Removes a user from the MongoDB collection
  * @param {String} email - the email of the user to remove
  * @param {requestCallback} callback - handles function response.
@@ -145,4 +196,39 @@ module.exports.deleteUser = function (email, callback) {
             sucesss: true
         })
     })
+}
+
+/**
+ * @function getUsersByRole
+ * Returns an array of all users with the given role.
+ * @param {String} role - the role for which to query
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.getUsersByRole = function (role, callback) {
+    UserModel.find({'role':role}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+/**
+ * @function verifyUser
+ * Verifies a user account, so they can perform actions
+ * @param {String} code - the unique code used for verification
+ * @param {requestCallback} callback - handles the function response
+ */
+module.exports.verifyUser = function (code, callback) {
+    UserModel.findOneAndUpdate({'_id': {$regex: /code/}}, {'verified':true}, (error, result) => {
+        if (error) callback(error)
+        else callback(null, result)
+    })
+}
+
+/**
+ * @function sendVerificationCode
+ * Sends a code to a unverified user's email, proving they own the email address.
+ * @param {String} code - the 
+ */
+module.exports.sendVerificationCode = function (code, callback) {
+
 }

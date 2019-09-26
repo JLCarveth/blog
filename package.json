@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "auth",
   "version": "1.0.0",
@@ -25,3 +26,34 @@
     "nodemon": "^1.19.2"
   }
 }
+=======
+{
+  "name": "auth",
+  "version": "0.1.0",
+  "description": "An attempt to build an system that can authorize API requests.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "John L. Carveth",
+    "email": "jlcarveth@gmail.com",
+    "url": "johncarveth.com"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.3.0",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.3.6"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
+>>>>>>> master
